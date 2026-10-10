@@ -25,7 +25,7 @@ A05 在 MFT25 作者提供的训练视频 `val_half` 上运行，8 段视频、1
 - `SU-T-Reproduction/runs/fixed_detection_A05/`：七个配置的 MOT 格式逐视频预测文件。
 - `SU-T-Reproduction/metrics/fixed_detection_A05/`：TrackEval 原始输出和汇总指标。
 - `SU-T/MFT25/MFT25-train.zip`：本机 MFT25 训练集压缩包硬链接（Git 忽略）。
-- `SU-T/datasets/mft25/`：本机已解压数据的 Junction（Git 忽略，指向原工作区的解压目录）。
+- `SU-T/datasets/mft25/`：本机已解压数据的 Junction，指向工作区外侧的 `SU-T-Data/mft25/`（原始图片不纳入 Git）。
 - `Pretrained/`：仅有权重放置说明；不含权重，目录内权重文件均被 Git 忽略。
 
 ## 数据与权重
@@ -36,8 +36,8 @@ A05 在 MFT25 作者提供的训练视频 `val_half` 上运行，8 段视频、1
 
 ## 打开 / 评分
 
-如果只想阅读结论，先看 A05 报告。如果要在有 Python 3.10、TrackEval 1.3.0、同一 MFT25 文件及作者权重的本机环境重算评分，请在本目录运行 `python SU-T-Reproduction/score_fixed_detection_ablation.py`。若要重新推理，还需要先把权重放到 `Pretrained/` 并确保 `SU-T/datasets/mft25/` 指向已解压的 MFT25 图像；推理和回放脚本及参数快照均已归档。归档时的运行环境记录在 `SU-T-Reproduction/data/run_metadata.json`。
+如果只想阅读结论，先看 A05 报告。若要重算评分，需要 Python 3.10、TrackEval 1.3.0 和档案中保存的固定检测缓存；在本目录运行 `python SU-T-Reproduction/score_fixed_detection_ablation.py`。若要重新推理，还需重新下载作者权重放入 `Pretrained/`，并确保 `SU-T/datasets/mft25/` Junction 指向已解压的 MFT25 图像。图像当前存放在仓库旁的 `SU-T-Data/mft25/`；推理和回放脚本及参数快照均已归档。归档时的运行环境记录在 `SU-T-Reproduction/data/run_metadata.json`。
 
 ## Git
 
-此目录是独立 Git 仓库；原来的 `SU-T` 工作区未被重置或改写。`.gitignore` 排除权重、原始数据、图片目录、缓存字节码和虚拟环境。首次提交只包含来源、代码、文本记录、实验输入缓存、预测及指标，不包含权重或原始图片。
+此目录是独立 Git 仓库。完整源码快照及本地改动保存在 `SU-T/` 与补丁文件中；权重已从本机删除。原始 SU-T 工作副本的删除操作被本机策略拦截，目前仍留在工作区。`.gitignore` 排除权重、原始数据、图片目录、缓存字节码和虚拟环境。仓库保留来源、代码、文本记录、实验输入缓存、预测及指标，不包含权重或原始图片。

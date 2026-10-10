@@ -5,7 +5,7 @@
 ## 复现范围
 
 - 不重新训练模型，直接加载作者提供的检测器与 ReID 权重。
-- 检测权重为 `Pretrained/Checkpoint.pth.tar`，ReID 权重为 `Pretrained/ReID-Checkpoint.pth`；两者 SHA-256 与运行元数据一致。ReID 推理会跳过训练分类头 `heads.weight`，其类别维度不同属预期，其余权重加载正常。
+- 检测权重 `Pretrained/Checkpoint.pth.tar` 和 ReID 权重 `Pretrained/ReID-Checkpoint.pth` 曾用于本次评测；两者 SHA-256 记录在运行元数据中，文件已在评测完成后从本机删除。ReID 推理会跳过训练分类头 `heads.weight`，其类别维度不同属预期，其余权重加载正常。复跑推理需按 `Pretrained/README.md` 重新获取权重。
 - 使用作者的 `SU-T-ReID` 配置和 MFT25 跟踪器实现。
 - 在 MFT25 训练集的 8 段视频上评估 `val_half`：BT-001、BT-003、BT-005、MSK-002、PF-001、SN-001、SN-013、SN-015。
 - 保存作者入口生成的逐帧跟踪结果，并使用 TrackEval 计算 HOTA、DetA、AssA、MOTA、IDF1 等指标。
@@ -24,7 +24,7 @@
 - `metrics/`：汇总指标和逐序列指标。
 - `runs/`：作者评测入口写出的 MOT 格式跟踪结果。
 
-原始 MFT25 压缩包位于项目目录 `SU-T/MFT25/`，解压后的图像位于 `SU-T/datasets/mft25/`。不复制整套原始图像到本目录；数据清单会记录来源、校验信息和路径。
+原始 MFT25 压缩包硬链接保存在档案 `SU-T/MFT25/`，解压后的图像当前位于仓库旁的 `SU-T-Data/mft25/`，并通过 `SU-T/datasets/mft25/` Junction 访问。不复制整套原始图像到 Git；数据清单会记录来源、校验信息和路径。
 
 ## 结果解释
 

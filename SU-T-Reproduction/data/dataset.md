@@ -16,8 +16,8 @@ MFT25 测试集标注不可见，本档案没有访问或生成官方榜单结�
 ## 当前工作区中的数据
 
 - `../../SU-T/MFT25/MFT25-train.zip`（从 `SU-T-Reproduction/data` 相对路径计）是本机原压缩包的硬链接。大小 1,199,319,979 bytes，SHA-256 `ab8d90cfeb96cfcdbb7d43d753cc50158097e51d4703a713000de222852b4ad3`。
-- `../../SU-T/datasets/mft25/` 当前是指向原工作区解压数据的 Junction。Git 忽略压缩包和图像文件夹。
+- `../../SU-T/datasets/mft25/` 是本地 Junction，指向仓库旁的 `SU-T-Data/mft25/`。数据目录和压缩包均不进入 Git。
 - `detection_cache_A05/` 是同一个作者检测器在 `val_half` 上生成的一次冻结 post-NMS 检测结果缓存；七种 tracker 共用。
 - 标签、GT、缓存及预测在本 Git 仓库中保留；完整帧图像和原始大压缩包不进入 Git 历史。
 
-重新获取数据后，将压缩包放入档案根目录 `SU-T/MFT25/MFT25-train.zip`，解压到 `SU-T/datasets/mft25/`。`prepare_val_half.py` 可根据该压缩包重建验证标签和 GT；本次已使用的文件快照仍已随档案跟踪。
+重新获取数据后，将压缩包放入档案根目录 `SU-T/MFT25/MFT25-train.zip`，解压到仓库旁的 `SU-T-Data/mft25/`，并将 `SU-T/datasets/mft25/` Junction 指向该目录。`prepare_val_half.py` 可根据该压缩包重建验证标签和 GT；本次已使用的文件快照仍已随档案跟踪。

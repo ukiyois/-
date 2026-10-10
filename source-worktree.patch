@@ -1,0 +1,361 @@
+diff --git a/fast_reid/fastreid/data/build.py b/fast_reid/fastreid/data/build.py
+index ed53c3f..932552c 100644
+--- a/fast_reid/fastreid/data/build.py
++++ b/fast_reid/fastreid/data/build.py
+@@ -4,12 +4,13 @@
+ @contact: sherlockliao01@gmail.com
+ """
+ 
+-import logging
+-import os
+-
+-import torch
+-from torch._six import string_classes
+-from collections import Mapping
++import logging
++import os
++from collections.abc import Mapping
++
++import torch
++
++string_classes = (str, bytes)
+ 
+ from fast_reid.fastreid.config import configurable
+ from fast_reid.fastreid.utils import comm
+diff --git a/fast_reid/fastreid/evaluation/rank.py b/fast_reid/fastreid/evaluation/rank.py
+index 6a8996c..7d8fb77 100644
+--- a/fast_reid/fastreid/evaluation/rank.py
++++ b/fast_reid/fastreid/evaluation/rank.py
+@@ -66,7 +66,7 @@ def eval_cuhk03(distmat, q_pids, g_pids, q_camids, g_camids, max_rank):
+ 
+         cmc = 0.
+         for repeat_idx in range(num_repeats):
+-            mask = np.zeros(len(raw_cmc), dtype=np.bool)
++            mask = np.zeros(len(raw_cmc), dtype=bool)
+             for _, idxs in g_pids_dict.items():
+                 # randomly sample one image for each gallery person
+                 rnd_idx = np.random.choice(idxs)
+diff --git a/fast_reid/fastreid/evaluation/testing.py b/fast_reid/fastreid/evaluation/testing.py
+index f1954e0..193e1c6 100644
+--- a/fast_reid/fastreid/evaluation/testing.py
++++ b/fast_reid/fastreid/evaluation/testing.py
+@@ -2,7 +2,8 @@
+ import logging
+ import pprint
+ import sys
+-from collections import Mapping, OrderedDict
++from collections import OrderedDict
++from collections.abc import Mapping
+ 
+ import numpy as np
+ from tabulate import tabulate
+diff --git a/tools/su_tracker.py b/tools/su_tracker.py
+index f9a71ee..243f8ad 100644
+--- a/tools/su_tracker.py
++++ b/tools/su_tracker.py
+@@ -7,7 +7,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
+ from yolox.core import launch
+ from yolox.exp import get_exp
+ from yolox.utils import configure_nccl, fuse_model, get_local_rank, get_model_info, setup_logger
+-from yolox.evaluators import MOTEvaluatorDance as MOTEvaluator
++from yolox.evaluators import MOTEvaluator
+ 
+ from utils.args import make_parser, args_merge_params_form_exp
+ import os
+diff --git a/trackers/SUT_UKF.py b/trackers/SUT_UKF.py
+index 0e141e8..676f2d8 100644
+--- a/trackers/SUT_UKF.py
++++ b/trackers/SUT_UKF.py
+@@ -86,7 +86,8 @@ def speed_direction_rb(bbox1, bbox2):
+     norm = np.sqrt((cy2-cy1)**2 + (cx2-cx1)**2) + 1e-6
+     return speed / norm
+ 
+-from filterpy.kalman import UnscentedKalmanFilter as UKF
++from filterpy.kalman import UnscentedKalmanFilter as UKF
++from filterpy.kalman import KalmanFilter as LinearKalmanFilter
+ from filterpy.kalman import MerweScaledSigmaPoints
+ 
+ 
+@@ -101,9 +102,14 @@ class KalmanBoxTracker(object):
+         Initialises a tracker using initial bounding box.
+         """
+         # define constant velocity model
+-        if not orig:
+-            from .UKF import UKF as U_KF
+-            self.kf = U_KF(dim_x=9, dim_z=5)
++        motion_filter = getattr(args, "motion_filter", "ukf") if args is not None else "ukf"
++        if motion_filter == "kf":
++            # Linear KF control for the fixed-detection ablation. Keep the
++            # same 9-D state, 5-D observation and covariance setup below.
++            self.kf = LinearKalmanFilter(dim_x=9, dim_z=5)
++        elif not orig:
++            from .UKF import UKF as U_KF
++            self.kf = U_KF(dim_x=9, dim_z=5)
+         else:
+             points = MerweScaledSigmaPoints(7, alpha=0.1, beta=2., kappa=0.)
+             self.kf = UKF(dim_x=7, dim_z=4, fx=self.fx, hx=self.hx, points=points)
+@@ -351,16 +357,16 @@ class SU_T(object):
+ 
+         # get predicted locations from existing trackers.
+         trks = np.zeros((len(self.trackers), 6))
+-        to_del = []
+-        ret = []
+-        for t, trk in enumerate(trks):
+-            pos, kalman_score, simple_score = self.trackers[t].predict()
+-            try:
+-                trk[:] = [pos[0][0], pos[0][1], pos[0][2], pos[0][3], kalman_score, simple_score[0]]
+-            except:
+-                trk[:] = [pos[0][0], pos[0][1], pos[0][2], pos[0][3], kalman_score, simple_score]
+-            if np.any(np.isnan(pos)):
+-                to_del.append(t)
++        to_del = []
++        ret = []
++        for t, trk in enumerate(trks):
++            pos, kalman_score, simple_score = self.trackers[t].predict()
++            pos = np.asarray(pos).reshape(-1)
++            kalman_score = float(np.asarray(kalman_score).reshape(-1)[0])
++            simple_score = float(np.asarray(simple_score).reshape(-1)[0])
++            trk[:] = [pos[0], pos[1], pos[2], pos[3], kalman_score, simple_score]
++            if np.any(np.isnan(pos)):
++                to_del.append(t)
+         trks = np.ma.compress_rows(np.ma.masked_invalid(trks))
+         for t in reversed(to_del):
+             self.trackers.pop(t)
+diff --git a/trackers/SUT_reid_UKF.py b/trackers/SUT_reid_UKF.py
+index 003870e..2ea368d 100644
+--- a/trackers/SUT_reid_UKF.py
++++ b/trackers/SUT_reid_UKF.py
+@@ -384,14 +384,14 @@ class SU_T_ReID(object):
+         id_feature_second = id_feature[inds_second]  # ID feature of 2nd stage matching
+ 
+         trks = np.zeros((len(self.trackers), 6))
+-        to_del = []
+-        ret = []
+-        for t, trk in enumerate(trks):
+-            pos, kalman_score, simple_score = self.trackers[t].predict()
+-            try:
+-                trk[:] = [pos[0][0], pos[0][1], pos[0][2], pos[0][3], kalman_score, simple_score[0]]
+-            except:
+-                trk[:] = [pos[0][0], pos[0][1], pos[0][2], pos[0][3], kalman_score, simple_score]
++        to_del = []
++        ret = []
++        for t, trk in enumerate(trks):
++            pos, kalman_score, simple_score = self.trackers[t].predict()
++            pos = np.asarray(pos).reshape(-1)
++            kalman_score = float(np.asarray(kalman_score).reshape(-1)[0])
++            simple_score = float(np.asarray(simple_score).reshape(-1)[0])
++            trk[:] = [pos[0], pos[1], pos[2], pos[3], kalman_score, simple_score]
+             if np.any(np.isnan(pos)):
+                 to_del.append(t)
+         trks = np.ma.compress_rows(np.ma.masked_invalid(trks))
+@@ -415,11 +415,11 @@ class SU_T_ReID(object):
+         """
+         if self.args.EG_weight_high_score > 0 and self.args.TCM_first_step:
+             track_features = np.asarray([track.smooth_feat for track in self.trackers],
+-                                        dtype=np.float)
++                                        dtype=float)
+             emb_dists = embedding_distance(track_features, id_feature_keep).T
+             if self.args.with_longterm_reid or self.args.with_longterm_reid_correction:
+                 long_track_features = np.asarray([np.vstack(list(track.features)).mean(0) for track in self.trackers],
+-                                                 dtype=np.float)
++                                                 dtype=float)
+                 assert track_features.shape == long_track_features.shape
+                 long_emb_dists = embedding_distance(long_track_features, id_feature_keep).T
+                 assert emb_dists.shape == long_emb_dists.shape
+@@ -466,7 +466,7 @@ class SU_T_ReID(object):
+                     iou_left -= np.array(cal_score_dif_batch_two_score(dets_second, u_trks) * self.args.TCM_byte_step_weight)
+                     iou_left_thre = iou_left
+                 if self.args.EG_weight_low_score > 0:
+-                    u_track_features = np.asarray([track.smooth_feat for track in u_tracklets], dtype=np.float)
++                    u_track_features = np.asarray([track.smooth_feat for track in u_tracklets], dtype=float)
+                     emb_dists_low_score = embedding_distance(u_track_features, id_feature_second).T
+                     matched_indices = linear_assignment(-iou_left + self.args.EG_weight_low_score * emb_dists_low_score,
+                                                         )
+diff --git a/trackers/association.py b/trackers/association.py
+index ab175e2..80d10a0 100644
+--- a/trackers/association.py
++++ b/trackers/association.py
+@@ -742,7 +742,7 @@ def embedding_distance(tracks_feat, detections_feat, metric='cosine'):
+     :return: cost_matrix np.ndarray
+     """
+ 
+-    cost_matrix = np.zeros((len(tracks_feat), len(detections_feat)), dtype=np.float)
++    cost_matrix = np.zeros((len(tracks_feat), len(detections_feat)), dtype=float)
+     if cost_matrix.size == 0:
+         return cost_matrix
+     # det_features = np.asarray([track.curr_feat for track in detections], dtype=np.float)    # [detection_num, emd_dim]
+@@ -910,4 +910,4 @@ def fish_iou_batch(bboxes1, bboxes2):
+     # Normalize to [0,1] range
+     fish_iou = np.clip(fish_iou, 0, 1)
+ 
+-    return fish_iou
+\ No newline at end of file
++    return fish_iou
+diff --git a/trackers/byte_tracker/byte_tracker.py b/trackers/byte_tracker/byte_tracker.py
+index cf7e4c5..4655dff 100644
+--- a/trackers/byte_tracker/byte_tracker.py
++++ b/trackers/byte_tracker/byte_tracker.py
+@@ -15,7 +15,7 @@ class STrack(BaseTrack):
+     def __init__(self, tlwh, score):
+ 
+         # wait activate
+-        self._tlwh = np.asarray(tlwh, dtype=np.float)
++        self._tlwh = np.asarray(tlwh, dtype=float)
+         self.kalman_filter = None
+         self.mean, self.covariance = None, None
+         self.is_activated = False
+diff --git a/trackers/byte_tracker/byte_tracker_public.py b/trackers/byte_tracker/byte_tracker_public.py
+index 48ce92f..648114b 100644
+--- a/trackers/byte_tracker/byte_tracker_public.py
++++ b/trackers/byte_tracker/byte_tracker_public.py
+@@ -15,7 +15,7 @@ class STrack(BaseTrack):
+     def __init__(self, tlwh, score):
+ 
+         # wait activate
+-        self._tlwh = np.asarray(tlwh, dtype=np.float)
++        self._tlwh = np.asarray(tlwh, dtype=float)
+         self.kalman_filter = None
+         self.mean, self.covariance = None, None
+         self.is_activated = False
+diff --git a/trackers/byte_tracker/byte_tracker_score.py b/trackers/byte_tracker/byte_tracker_score.py
+index caa66c5..11c4389 100644
+--- a/trackers/byte_tracker/byte_tracker_score.py
++++ b/trackers/byte_tracker/byte_tracker_score.py
+@@ -17,7 +17,7 @@ class STrack(BaseTrack):
+     def __init__(self, tlwh, score):
+ 
+         # wait activate
+-        self._tlwh = np.asarray(tlwh, dtype=np.float)
++        self._tlwh = np.asarray(tlwh, dtype=float)
+         self.kalman_filter = None
+         self.kalman_filter_score = None
+         self.mean, self.covariance = None, None
+diff --git a/trackers/byte_tracker/matching.py b/trackers/byte_tracker/matching.py
+index 8626979..ec20c33 100644
+--- a/trackers/byte_tracker/matching.py
++++ b/trackers/byte_tracker/matching.py
+@@ -58,13 +58,13 @@ def ious(atlbrs, btlbrs):
+ 
+     :rtype ious np.ndarray
+     """
+-    ious = np.zeros((len(atlbrs), len(btlbrs)), dtype=np.float)
++    ious = np.zeros((len(atlbrs), len(btlbrs)), dtype=float)
+     if ious.size == 0:
+         return ious
+ 
+     ious = bbox_ious(
+-        np.ascontiguousarray(atlbrs, dtype=np.float),
+-        np.ascontiguousarray(btlbrs, dtype=np.float)
++        np.ascontiguousarray(atlbrs, dtype=float),
++        np.ascontiguousarray(btlbrs, dtype=float)
+     )
+ 
+     return ious
+@@ -77,7 +77,7 @@ def hmiou(bboxes1, bboxes2):
+     """
+     # for details should go to https://arxiv.org/pdf/1902.09630.pdf
+     # ensure predict's bbox form
+-    ious = np.zeros((len(bboxes1), len(bboxes2)), dtype=np.float)
++    ious = np.zeros((len(bboxes1), len(bboxes2)), dtype=float)
+     if ious.size == 0:
+         return ious
+     bboxes2 = np.expand_dims(bboxes2, 0)
+@@ -165,13 +165,13 @@ def embedding_distance(tracks, detections, metric='cosine'):
+     :return: cost_matrix np.ndarray
+     """
+ 
+-    cost_matrix = np.zeros((len(tracks), len(detections)), dtype=np.float)
++    cost_matrix = np.zeros((len(tracks), len(detections)), dtype=float)
+     if cost_matrix.size == 0:
+         return cost_matrix
+-    det_features = np.asarray([track.curr_feat for track in detections], dtype=np.float)
++    det_features = np.asarray([track.curr_feat for track in detections], dtype=float)
+     #for i, track in enumerate(tracks):
+         #cost_matrix[i, :] = np.maximum(0.0, cdist(track.smooth_feat.reshape(1,-1), det_features, metric))
+-    track_features = np.asarray([track.smooth_feat for track in tracks], dtype=np.float)
++    track_features = np.asarray([track.smooth_feat for track in tracks], dtype=float)
+     cost_matrix = np.maximum(0.0, cdist(track_features, det_features, metric))  # Nomalized features
+     return cost_matrix
+ 
+@@ -244,4 +244,4 @@ def add_score_kalman_byte_step(cost_matrix, strack_pool, detections, interval=1.
+     # det_score = np.array([np.clip(det.score - (det.pre_score - det.score), 0.1, track_thresh) for det in detections])
+     det_score = np.array([det.score for det in detections])
+     cost_matrix += (abs(np.expand_dims(strack_score, axis=1).repeat(cost_matrix.shape[1], axis=1) - det_score) * interval)
+-    return cost_matrix
+\ No newline at end of file
++    return cost_matrix
+diff --git a/utils/args.py b/utils/args.py
+index c59211f..64da63b 100644
+--- a/utils/args.py
++++ b/utils/args.py
+@@ -71,7 +71,7 @@ def make_parser():
+     parser.add_argument("--alpha", default=0.8, type=float, help="momentum of embedding update")
+     parser.add_argument("--with_fastreid", dest="with_fastreid", default=False, action="store_true", help="use FastReID flag.")
+     parser.add_argument("--fast_reid_config", dest="fast_reid_config", default=r"fast_reid/configs/CUHKSYSU_DanceTrack/sbs_S50.yml", type=str, help="reid config file path")
+-    parser.add_argument("--fast_reid_weights", dest="fast_reid_weights", default=r"fast_reid/logs/CUHKSYSU_DanceTrack/sbs_S50/model_final.pth", type=str, help="reid weight path")
++    parser.add_argument("--fast_reid_weights", dest="fast_reid_weights", default=None, type=str, help="reid weight path")
+     parser.add_argument("--with_longterm_reid", dest="with_longterm_reid", default=False, action="store_true", help="use long-term reid features for association.")
+     parser.add_argument("--longterm_reid_weight", default=0.0, type=float, help="weight of appearance cost matrix when using long term reid features in 1st stage association")
+     parser.add_argument("--longterm_reid_weight_low", default=0.0, type=float, help="weight of appearance cost matrix when using long term reid features in 2nd stage association")
+@@ -116,7 +116,13 @@ def make_parser():
+     return parser
+ 
+ 
+-def args_merge_params_form_exp(args,exp):
+-    for k, v in exp.__dict__.items():
+-        if k in args.__dict__:
+-            (args.__dict__)[k] = v
+\ No newline at end of file
++def args_merge_params_form_exp(args,exp):
++    cli_ckpt = args.ckpt
++    cli_fast_reid_weights = args.fast_reid_weights
++    for k, v in exp.__dict__.items():
++        if k in args.__dict__:
++            (args.__dict__)[k] = v
++    if cli_ckpt is not None:
++        args.ckpt = cli_ckpt
++    if cli_fast_reid_weights is not None:
++        args.fast_reid_weights = cli_fast_reid_weights
+diff --git a/yolox/data/datasets/mot.py b/yolox/data/datasets/mot.py
+index 7cd4002..752f17d 100644
+--- a/yolox/data/datasets/mot.py
++++ b/yolox/data/datasets/mot.py
+@@ -101,7 +101,10 @@ class MOTDataset(Dataset):
+         img_file = os.path.join(
+             self.data_dir, self.name, file_name
+         )
+-        img = cv2.imread(img_file)
++        # cv2.imread cannot open paths containing non-ASCII characters on
++        # Windows. Decode the file bytes so datasets under Unicode paths work.
++        img_bytes = np.fromfile(img_file, dtype=np.uint8)
++        img = cv2.imdecode(img_bytes, cv2.IMREAD_COLOR) if img_bytes.size else None
+ 
+         assert img is not None
+ 
+diff --git a/yolox/evaluators/mot_evaluator.py b/yolox/evaluators/mot_evaluator.py
+index 365a51b..538788e 100644
+--- a/yolox/evaluators/mot_evaluator.py
++++ b/yolox/evaluators/mot_evaluator.py
+@@ -632,7 +632,7 @@ class MOTEvaluator:
+                     video_names[video_id] = video_name
+ 
+                 if frame_id == 1:
+-                    tracker = su_t(args, det_thresh=self.args.track_thresh, iou_threshold=self.args.iou_thresh,
++                    tracker = SU_T(args, det_thresh=self.args.track_thresh, iou_threshold=self.args.iou_thresh,
+                                      asso_func=self.args.asso, delta_t=self.args.deltat, inertia=self.args.inertia,
+                                      use_byte=self.args.use_byte)
+                     if len(results) != 0:
+@@ -1721,7 +1721,12 @@ class MOTEvaluator:
+             _, tmp = tempfile.mkstemp()
+             json.dump(data_dict, open(tmp, "w"))
+             cocoDt = cocoGt.loadRes(tmp)
+-            from yolox.layers import COCOeval_opt as COCOeval
++            try:
++                from yolox.layers import COCOeval_opt as COCOeval
++            except ImportError:
++                # The optional C++ COCO evaluator is not built on this Windows
++                # environment; pycocotools provides the same evaluation API.
++                from pycocotools.cocoeval import COCOeval
+             cocoEval = COCOeval(cocoGt, cocoDt, annType[1])
+             cocoEval.evaluate()
+             cocoEval.accumulate()

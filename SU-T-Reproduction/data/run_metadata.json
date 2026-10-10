@@ -1,0 +1,112 @@
+{
+  "captured_at_utc": "2026-10-10T06:29:45.726796+00:00",
+  "python": "3.10.9",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "torch_cuda_available": true,
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+    "total_memory_bytes": 8518041600,
+    "free_memory_bytes_at_capture": 7385120768,
+    "cuda_runtime": "12.8"
+  },
+  "packages": {
+    "numpy": "2.2.6",
+    "torch": "2.10.0+cu128",
+    "torchvision": "0.25.0+cu128",
+    "opencv-python": "4.12.0.88",
+    "pycocotools": "2.0.11",
+    "motmetrics": null,
+    "loguru": "0.7.3",
+    "lap": "0.5.13",
+    "cython-bbox": "0.1.5",
+    "filterpy": "1.4.5",
+    "faiss-cpu": "1.15.1",
+    "xmltodict": "1.0.4",
+    "trackeval": "1.3.0"
+  },
+  "repository": {
+    "path": "D:\\Dsektop\\\u6e14\u4e1aCV\\SU-T",
+    "commit": "479be89a27129f6879c62710a83abac6a8b261ee",
+    "working_tree_status": [
+      " M fast_reid/fastreid/data/build.py",
+      " M fast_reid/fastreid/evaluation/rank.py",
+      " M fast_reid/fastreid/evaluation/testing.py",
+      " M tools/su_tracker.py",
+      " M trackers/SUT_reid_UKF.py",
+      " M trackers/association.py",
+      " M trackers/byte_tracker/byte_tracker.py",
+      " M trackers/byte_tracker/byte_tracker_public.py",
+      " M trackers/byte_tracker/byte_tracker_score.py",
+      " M trackers/byte_tracker/matching.py",
+      " M utils/args.py",
+      " M yolox/data/datasets/mot.py",
+      " M yolox/evaluators/mot_evaluator.py",
+      "?? exps/__pycache__/",
+      "?? fast_reid/__pycache__/",
+      "?? fast_reid/fastreid/__pycache__/",
+      "?? fast_reid/fastreid/config/__pycache__/",
+      "?? fast_reid/fastreid/data/__pycache__/",
+      "?? fast_reid/fastreid/data/datasets/__pycache__/",
+      "?? fast_reid/fastreid/data/samplers/__pycache__/",
+      "?? fast_reid/fastreid/data/transforms/__pycache__/",
+      "?? fast_reid/fastreid/engine/__pycache__/",
+      "?? fast_reid/fastreid/evaluation/__pycache__/",
+      "?? fast_reid/fastreid/evaluation/rank_cylib/__pycache__/",
+      "?? fast_reid/fastreid/layers/__pycache__/",
+      "?? fast_reid/fastreid/modeling/__pycache__/",
+      "?? fast_reid/fastreid/modeling/backbones/__pycache__/",
+      "?? fast_reid/fastreid/modeling/backbones/regnet/__pycache__/",
+      "?? fast_reid/fastreid/modeling/heads/__pycache__/",
+      "?? fast_reid/fastreid/modeling/losses/__pycache__/",
+      "?? fast_reid/fastreid/modeling/meta_arch/__pycache__/",
+      "?? fast_reid/fastreid/solver/__pycache__/",
+      "?? fast_reid/fastreid/solver/optim/__pycache__/",
+      "?? fast_reid/fastreid/utils/__pycache__/",
+      "?? motmetrics/__pycache__/",
+      "?? tools/__pycache__/",
+      "?? trackers/__pycache__/",
+      "?? trackers/byte_tracker/__pycache__/",
+      "?? utils/__pycache__/",
+      "?? yolox/__pycache__/",
+      "?? yolox/core/__pycache__/",
+      "?? yolox/data/__pycache__/",
+      "?? yolox/data/datasets/__pycache__/",
+      "?? yolox/evaluators/__pycache__/",
+      "?? yolox/exp/__pycache__/",
+      "?? yolox/layers/__pycache__/",
+      "?? yolox/models/__pycache__/",
+      "?? yolox/utils/__pycache__/"
+    ]
+  },
+  "inputs": {
+    "mft25_train_archive": {
+      "path": "D:\\Dsektop\\\u6e14\u4e1aCV\\SU-T\\MFT25\\MFT25-train.zip",
+      "size_bytes": 1199319979,
+      "sha256": "ab8d90cfeb96cfcdbb7d43d753cc50158097e51d4703a713000de222852b4ad3"
+    },
+    "detector_checkpoint": {
+      "path": "D:\\Dsektop\\\u6e14\u4e1aCV\\Pretrained\\Checkpoint.pth.tar",
+      "size_bytes": 792835795,
+      "sha256": "32d89a7bad1ea235ad61ca64b1db280d2105f99348912defad6937390c1f6eb0"
+    },
+    "reid_checkpoint": {
+      "path": "D:\\Dsektop\\\u6e14\u4e1aCV\\Pretrained\\ReID-Checkpoint.pth",
+      "size_bytes": 558336743,
+      "sha256": "8ffd0c75dbe146c63de76bf3f98987c9542253cb528a9290eaab327ec26965f3"
+    },
+    "dataset_manifest": "D:\\Dsektop\\\u6e14\u4e1aCV\\SU-T-Reproduction\\data\\dataset_manifest.json"
+  },
+  "evaluation": {
+    "split": "MFT25 author-provided val_half, 8 training sequences",
+    "training": false,
+    "batch_size": 1,
+    "fp16": true,
+    "fuse": false,
+    "input_size": [
+      800,
+      1440
+    ],
+    "test_conf": 0.1,
+    "nms_threshold": 0.7
+  }
+}

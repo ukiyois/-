@@ -1,0 +1,17 @@
+{
+  "status": "PREDICTIONS_COMPLETE",
+  "dataset": "MFT25 author-provided train val_half",
+  "frames": 16035,
+  "detector_cache": "D:\\Dsektop\\\u6e14\u4e1aCV\\SU-T-Reproduction\\data\\detection_cache_A05",
+  "prediction_root": "D:\\Dsektop\\\u6e14\u4e1aCV\\SU-T-Reproduction\\runs\\fixed_detection_A05",
+  "variants": [
+    "KF_IoU",
+    "UKF_IoU",
+    "KF_FishIoU",
+    "UKF_FishIoU",
+    "UKF_FishIoU_ReID",
+    "ByteTrack",
+    "OCSort"
+  ],
+  "claim_scope": "local controlled validation ablation only; not a paper test-set reproduction"
+}

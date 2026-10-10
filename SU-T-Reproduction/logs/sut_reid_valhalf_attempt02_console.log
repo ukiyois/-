@@ -1,0 +1,90 @@
+2026-10-10 14:26:13 | INFO     | __main__:78 - Args: Namespace(expn='SU-T-ReID-ValHalf-A02', name=None, dist_backend='nccl', output_dir='D:\\Dsektop\\��ҵCV\\SU-T-Reproduction\\runs', dist_url=None, batch_size=1, devices=1, local_rank=0, num_machines=1, machine_rank=0, exp_file='..\\SU-T-Reproduction\\configs\\SU-T-ReID-ValHalf.py', fp16=True, fuse=False, trt=False, test=False, speed=False, opts=[], ckpt='D:\\Dsektop\\��ҵCV\\Pretrained\\Checkpoint.pth.tar', conf=0.1, nms=0.7, tsize=None, seed=None, track_thresh=0.6, iou_thresh=0.25, min_hits=3, inertia=0.05, deltat=3, track_buffer=30, match_thresh=0.9, min_box_area=100, gt_type='_val_half', mot20=False, public=False, asso='fishiou', use_byte=True, TCM_first_step=True, TCM_byte_step=True, TCM_first_step_weight=1.0, TCM_byte_step_weight=1.0, with_reid=True, EG_weight_high_score=1.3, EG_weight_low_score=1.2, low_thresh=0.1, high_score_matching_thresh=0.8, low_score_matching_thresh=0.5, alpha=0.8, with_fastreid=True, fast_reid_config='fast_reid/configs/SBS_S101.yml', fast_reid_weights='D:\\Dsektop\\��ҵCV\\Pretrained\\ReID-Checkpoint.pth', with_longterm_reid=False, longterm_reid_weight=0.0, longterm_reid_weight_low=0.0, with_longterm_reid_correction=True, longterm_reid_correction_thresh=0.4, longterm_reid_correction_thresh_low=0.4, longterm_bank_length=30, adapfs=False, ECC=False, raw_results_path='exps/permatrack_kitti_test/', out_path=None, dataset='mft25', hp=False, demo_type='image', path='./videos/demo.mp4', demo_dancetrack=False, camid=0, save_result=False, aspect_ratio_thresh=1.6, device='gpu')
+2026-10-10 14:26:14 | INFO     | __main__:88 - Model Summary: Params: 99.00M, Gflops: 793.21
+2026-10-10 14:26:14 | INFO     | yolox.data.datasets.mot:41 - loading annotations into memory...
+2026-10-10 14:26:14 | INFO     | yolox.data.datasets.mot:41 - Done (t=0.53s)
+2026-10-10 14:26:14 | INFO     | pycocotools.coco:86 - creating index...
+2026-10-10 14:26:14 | INFO     | pycocotools.coco:86 - index created!
+2026-10-10 14:26:15 | INFO     | __main__:109 - loading checkpoint
+2026-10-10 14:26:15 | INFO     | __main__:114 - loaded checkpoint done.
+2026-10-10 14:26:49 | ERROR    | yolox.core.launch:90 - An error has been caught in function 'launch', process 'MainProcess' (47332), thread 'MainThread' (54856):
+Traceback (most recent call last):
+
+  File "D:\Dsektop\��ҵCV\SU-T\trackers\SUT_reid_UKF.py", line 392, in update
+    trk[:] = [pos[0][0], pos[0][1], pos[0][2], pos[0][3], kalman_score, simple_score[0]]
+    ��         ��          ��          ��          ��          ��             �� np.float32(0.6)
+    ��         ��          ��          ��          ��          �� array([0.80205488])
+    ��         ��          ��          ��          �� array([[1.27035016e+03, 5.00175034e+02, 1.35945014e+03, 6.55425064e+02,
+    ��         ��          ��          ��                    8.02054882e-01]])
+    ��         ��          ��          �� array([[1.27035016e+03, 5.00175034e+02, 1.35945014e+03, 6.55425064e+02,
+    ��         ��          ��                    8.02054882e-01]])
+    ��         ��          �� array([[1.27035016e+03, 5.00175034e+02, 1.35945014e+03, 6.55425064e+02,
+    ��         ��                    8.02054882e-01]])
+    ��         �� array([[1.27035016e+03, 5.00175034e+02, 1.35945014e+03, 6.55425064e+02,
+    ��                   8.02054882e-01]])
+    �� array([0., 0., 0., 0., 0., 0.])
+
+IndexError: invalid index to scalar variable.
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\Users\ukiyo\AppData\Local\Programs\Python\Python310\lib\runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+           ��         ��     �� {'__name__': '__main__', '__doc__': None, '__package__': 'tools', '__loader__': <_frozen_importlib_external.SourceFileLoader ...
+           ��         �� <code object <module> at 0x000001E0AF074710, file "D:\Dsektop\��ҵCV\SU-T\tools\su_tracker.py", line 1>
+           �� <function _run_code at 0x000001E0AF0336D0>
+
+  File "C:\Users\ukiyo\AppData\Local\Programs\Python\Python310\lib\runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+         ��     �� {'__name__': '__main__', '__doc__': None, '__package__': 'tools', '__loader__': <_frozen_importlib_external.SourceFileLoader ...
+         �� <code object <module> at 0x000001E0AF074710, file "D:\Dsektop\��ҵCV\SU-T\tools\su_tracker.py", line 1>
+
+  File "D:\Dsektop\��ҵCV\SU-T\tools\su_tracker.py", line 168, in <module>
+    launch(
+    �� <function launch at 0x000001E0F14A93F0>
+
+> File "D:\Dsektop\��ҵCV\SU-T\yolox\core\launch.py", line 90, in launch
+    main_func(*args)
+    ��          �� (�V�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�h�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T...
+    �� <function main at 0x000001E0AE1B5D80>
+
+  File "D:\Dsektop\��ҵCV\SU-T\tools\su_tracker.py", line 143, in main
+    *_, summary = evaluator.evaluate_su_t_reid(
+                  ��         �� <function MOTEvaluator.evaluate_su_t_reid at 0x000001E0AE0D81F0>
+                  �� <yolox.evaluators.mot_evaluator.MOTEvaluator object at 0x000001E0AE1C29E0>
+
+  File "D:\Dsektop\��ҵCV\SU-T\yolox\evaluators\mot_evaluator.py", line 883, in evaluate_su_t_reid
+    online_targets = tracker.update(outputs[0], info_imgs, self.img_size, id_feature=id_feature, warp_matrix=warp_matrix)        # [hgx0411] id_feature
+                     ��       ��      ��           ��          ��    ��                    ��                       �� None
+                     ��       ��      ��           ��          ��    ��                    �� array([[ 0.        ,  0.        ,  0.        , ...,  0.        ,
+                     ��       ��      ��           ��          ��    ��                              -0.0166626 ,  0.        ],
+                     ��       ��      ��           ��          ��    ��                             [ 0.        ,  0. ...
+                     ��       ��      ��           ��          ��    �� (800, 1440)
+                     ��       ��      ��           ��          �� <yolox.evaluators.mot_evaluator.MOTEvaluator object at 0x000001E0AE1C29E0>
+                     ��       ��      ��           �� [tensor([1080]), tensor([1920]), tensor([2]), tensor([1]), ('BT-001/img1/001503.jpg',)]
+                     ��       ��      �� [tensor([[9.4250e+02, 3.6750e+02, 1.0055e+03, 4.8500e+02, 9.8193e-01, 8.2031e-01,
+                     ��       ��                 0.0000e+00],
+                     ��       ��                [7.4400e+02, ...
+                     ��       �� <function SU_T_ReID.update at 0x000001E0A1BD6290>
+                     �� <trackers.SUT_reid_UKF.SU_T_ReID object at 0x000001E40698A170>
+
+  File "D:\Dsektop\��ҵCV\SU-T\trackers\SUT_reid_UKF.py", line 394, in update
+    trk[:] = [pos[0][0], pos[0][1], pos[0][2], pos[0][3], kalman_score, simple_score]
+    ��         ��          ��          ��          ��          ��             �� np.float32(0.6)
+    ��         ��          ��          ��          ��          �� array([0.80205488])
+    ��         ��          ��          ��          �� array([[1.27035016e+03, 5.00175034e+02, 1.35945014e+03, 6.55425064e+02,
+    ��         ��          ��          ��                    8.02054882e-01]])
+    ��         ��          ��          �� array([[1.27035016e+03, 5.00175034e+02, 1.35945014e+03, 6.55425064e+02,
+    ��         ��          ��                    8.02054882e-01]])
+    ��         ��          �� array([[1.27035016e+03, 5.00175034e+02, 1.35945014e+03, 6.55425064e+02,
+    ��         ��                    8.02054882e-01]])
+    ��         �� array([[1.27035016e+03, 5.00175034e+02, 1.35945014e+03, 6.55425064e+02,
+    ��                   8.02054882e-01]])
+    �� array([0., 0., 0., 0., 0., 0.])
+
+ValueError: setting an array element with a sequence. The requested array would exceed the maximum number of dimension of 1.
+LAUNCHER_EXIT_CODE=0
+RUN_STATUS=FAILED

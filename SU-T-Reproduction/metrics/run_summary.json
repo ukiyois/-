@@ -1,0 +1,106 @@
+{
+  "run_id": "SU-T-ReID-ValHalf-A03",
+  "status": "COMPLETED",
+  "start_time_local": "2026-10-10 14:31:09.580000",
+  "end_time_local": "2026-10-10 15:17:31.122000",
+  "duration_seconds": 2781.542,
+  "split": "MFT25 author-provided train val_half",
+  "sequences": [
+    "BT-001",
+    "BT-003",
+    "BT-005",
+    "MSK-002",
+    "PF-001",
+    "SN-001",
+    "SN-013",
+    "SN-015"
+  ],
+  "frames": 16035,
+  "ground_truth_detections": 132057,
+  "hardware": {
+    "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+    "total_memory_bytes": 8518041600,
+    "free_memory_bytes_at_capture": 7385120768,
+    "cuda_runtime": "12.8"
+  },
+  "python_executable": "C:\\Users\\ukiyo\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+  "resource_observations": {
+    "gpu_memory_used_sampled_mib_range": [
+      3304,
+      3433
+    ],
+    "gpu_temperature_sampled_c_range": [
+      73,
+      86
+    ],
+    "sampling_note": "Periodic nvidia-smi snapshots during the completed run; not a hardware peak recorder."
+  },
+  "python": "3.10.9",
+  "packages": {
+    "numpy": "2.2.6",
+    "torch": "2.10.0+cu128",
+    "torchvision": "0.25.0+cu128",
+    "opencv-python": "4.12.0.88",
+    "pycocotools": "2.0.11",
+    "motmetrics": null,
+    "loguru": "0.7.3",
+    "lap": "0.5.13",
+    "cython-bbox": "0.1.5",
+    "filterpy": "1.4.5",
+    "faiss-cpu": "1.15.1",
+    "xmltodict": "1.0.4",
+    "trackeval": "1.3.0"
+  },
+  "weights": {
+    "detector_checkpoint": {
+      "path": "D:\\Dsektop\\渔业CV\\Pretrained\\Checkpoint.pth.tar",
+      "size_bytes": 792835795,
+      "sha256": "32d89a7bad1ea235ad61ca64b1db280d2105f99348912defad6937390c1f6eb0"
+    },
+    "reid_checkpoint": {
+      "path": "D:\\Dsektop\\渔业CV\\Pretrained\\ReID-Checkpoint.pth",
+      "size_bytes": 558336743,
+      "sha256": "8ffd0c75dbe146c63de76bf3f98987c9542253cb528a9290eaab327ec26965f3"
+    }
+  },
+  "evaluation_config": {
+    "split": "MFT25 author-provided val_half, 8 training sequences",
+    "training": false,
+    "batch_size": 1,
+    "fp16": true,
+    "fuse": false,
+    "input_size": [
+      800,
+      1440
+    ],
+    "test_conf": 0.1,
+    "nms_threshold": 0.7
+  },
+  "author_entry_metrics": {
+    "AP": {
+      "AP_50_95": 0.579,
+      "AP50": 0.922,
+      "AP75": 0.644
+    },
+    "average_forward_ms": 155.85,
+    "average_track_ms": 12.46,
+    "average_inference_ms": 168.31
+  },
+  "trackeval": {
+    "version": "1.3.0",
+    "HOTA_pct": 50.1899,
+    "DetA_pct": 69.916,
+    "AssA_pct": 36.2337,
+    "MOTA_pct": 85.5335,
+    "IDF1_pct": 57.2735,
+    "IDSW": 391,
+    "prediction_detections": 125514,
+    "ground_truth_detections": 132057,
+    "ground_truth_ids": 115,
+    "raw_summary": "trackeval_summary.json"
+  },
+  "per_sequence_csv": "sequence_summary.csv",
+  "predictions": "runs\\SU-T-ReID-ValHalf-A03\\SU-T-ReID-ValHalf-A03_val_EGWeightHigh1.3_EGWeightLow1.2_WithLongTermReIDCorrectionTrue_LongTermReIDCorrectionThresh0.4_LongTermReIDCorrectionThreshLow0.4_IoUThresh0.25_ScoreDifInterval1.0_SecScoreDifInterval1.0",
+  "run_log": "../logs/sut_reid_valhalf_attempt03_console.log",
+  "interpretation": "Local val_half verification only; this is the latter half of training videos and is not directly comparable with the hidden MFT25 test leaderboard."
+}

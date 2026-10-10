@@ -1,0 +1,571 @@
+                                     The Fortieth AAAI Conference on Artificial Intelligence (AAAI-26)
+
+
+
+
+      When Trackers Date Fish: A Benchmark and Framework for Underwater
+                             Multiple Fish Tracking
+          Weiran Li1,2 , Yeqiang Liu1 , Qiannan Guo1 , Yijie Wei1 , Hwa Liang Leo2 , Zhenbo Li1 *
+                                                        1
+                                                    China Agricultural University
+                                                    2
+                                                   National University of Singapore
+                                       {vranlee,yeqiangliu,guoqiannan,yjwei,lizb}@cau.edu.cn
+                                               weiranli@u.nus.edu, bielhl@nus.edu.sg
+
+
+                            Abstract
+  Multiple object tracking (MOT) technology has made sig-
+  nificant progress in terrestrial applications, but underwater
+  tracking scenarios remain underexplored despite their im-
+  portance to marine ecology and aquaculture. In this paper,
+  we present Multiple Fish Tracking Dataset 2025 (MFT25), a
+  comprehensive dataset specifically designed for underwater
+  multiple fish tracking, featuring 15 diverse video sequences
+  with 408,578 meticulously annotated bounding boxes across
+  48,066 frames. Our dataset captures various underwater en-
+  vironments, fish species, and challenging conditions includ-
+  ing occlusions, similar appearances, and erratic motion pat-
+  terns. Additionally, we introduce Scale-aware and Unscented
+  Tracker (SU-T), a specialized tracking framework featuring
+  an Unscented Kalman Filter (UKF) optimized for non-linear
+  swimming patterns of fish and a novel Fish-Intersection-over-
+  Union (FishIoU) matching that accounts for the unique mor-
+  phological characteristics of aquatic species. Extensive exper-
+  iments demonstrate that our SU-T baseline achieves state-of-
+  the-art performance on MFT25, with 34.1 HOTA and 44.6                    Figure 1: Evaluation of various MFT and MOT methods on
+  IDF1, while revealing fundamental differences between fish               MFT25 benchmark. Detailed results are provided in Table 2.
+  tracking and terrestrial object tracking scenarios.
+
+Codes and Dataset — https://vranlee.github.io/SU-T                         adaptation mechanisms by continuously tracking and asso-
+Extended version — https://arxiv.org/abs/2507.06400                        ciating individual targets across video sequences. MFT of-
+                                                                           fers significant applications in endangered species protec-
+                                                                           tion, aquaculture density optimization, and marine ecosys-
+                        Introduction                                       tem modeling (Jager et al. 2017).
+A tracker’s greatest challenge is not merely to find a fish, but              MFT is a specialized application of Multiple Object
+to arrange a date with the same fleeting shadow—a perfect                  Tracking (MOT), presents unique challenges in underwater
+alignment of time and space.                                               environments (Hassan et al. 2024; Dendorfer et al. 2021).
+                                                     (Preface)             It aims to generate continuous trajectories of individual fish
+                                                                           through reliable identification across video frames. Unlike
+Fish behavior monitoring and group dynamics analysis form                  single fish tracking, MFT must distinguish between numer-
+essential technical foundations for marine ecological re-                  ous similar-looking fish and maintain consistent identity as-
+search, aquaculture optimization, and fishery resource man-                signments despite rapid direction changes and frequent oc-
+agement (Cui et al. 2024; Huang et al. 2018). With advance-                clusions (Bewley et al. 2016; Zhang et al. 2022). The ability
+ments in computer vision and deep learning, underwater                     to resolve confusion between morphologically similar indi-
+Multiple Fish Tracking (MFT) has emerged as a core tech-                   viduals in varying water conditions becomes critical to suc-
+nology for efficient, non-invasive observation (Zeng et al.                cessful fish tracking, particularly in dense shoaling scenarios
+2023; Li et al. 2018). It enables quantitative analysis of fish            where individuals frequently cross paths (Sun et al. 2022).
+movement patterns, group interactions, and environmental                      Current methods largely rely on data-driven approaches,
+    * Corresponding author                                                 leveraging high-precision detectors to obtain real-time target
+Copyright © 2026, Association for the Advancement of Artificial            positions (Zhang et al. 2021; Li, Li, and Li 2022). However,
+Intelligence (www.aaai.org). All rights reserved.                          tracking fish in complex underwater environments presents
+
+
+                                                                    6459
+Figure 2: Distribution of target movement directions across datasets. Directional instability is notably more pronounced in the
+fish dataset compared to other target categories.
+
+
+                                                                          Intersection-over-Union (FishIoU) matching that ac-
+                                                                          counts for the unique morphological characteristics and
+                                                                          erratic movement behaviors of aquatic species.
+                                                                        • We conduct extensive comparative experiments demon-
+                                                                          strating that our tracker achieves state-of-the-art perfor-
+                                                                          mance on MFT25, with 34.1 HOTA and 44.6 IDF1, as
+                                                                          illustrated in Fig. 1.
+                                                                        • Through quantitative analysis, we highlight the funda-
+                                                                          mental differences between fish tracking and land-based
+                                                                          object tracking scenarios, as shown in Fig. 2 and ex-
+                                                                          tended version.
+Figure 3: The challenges of multiple fish tracking arise from
+factors such as fish physiological features and the complex-                  MFT25: When Trackers Date Fish
+ity of underwater scenarios.                                           Multiple Fish Tracking
+                                                                       Related Methods Fish tracking presents unique chal-
+several challenges, as shown in Fig. 3. On the one hand,               lenges due to complex underwater environments, distinc-
+high morphological similarity among individual fish com-               tive morphology, and erratic swimming behaviors (Cui et al.
+bined with their erratic movement patterns frequently leads            2024). Early approaches used traditional techniques like
+to identity switches and trajectory fragmentation (Li et al.           background subtraction (Shevchenko, Eerola, and Kaarna
+2024b). On the other hand, existing public datasets suffer             2018) and object segmentation (Huang et al. 2018), while
+from insufficient diversity and poor image quality (Peder-             recent advances employ deep learning methods including
+sen et al. 2023, 2020), limiting the development of tracking           SiamRPN (Wang et al. 2022), appearance-based models (Li
+models with strong generalization capabilities across com-             et al. 2018), graph-based tracking (Jager et al. 2017), and
+plex scenarios.                                                        Swin Transformers (Zeng et al. 2023). While sharing princi-
+   To address these challenges, we present Multiple Fish               ples with terrestrial tracking, underwater MOT remains less
+Tracking Dataset 2025 (MFT25), a large-scale dataset                   developed (Hassan et al. 2024). Terrestrial MOT research
+specifically designed for underwater MOT task, alongside               has explored multi-modal fusion (Li et al. 2024a), adap-
+Scale-aware and Unscented Tracker (SU-T), an efficient,                tive frame rates (Liu, Wu, and Fu 2023), computational effi-
+lightweight baseline model for online tracking. Our dataset            ciency (Liu, Li, and Wang 2023), appearance modeling (Sei-
+and tracker aim to establish a robust foundation for ad-               denschwarz et al. 2023), depth integration (Liu et al. 2025),
+vancing research in underwater object tracking systems with            and high-density scenarios (Lei et al. 2024).
+practical applications in marine ecology and aquaculture.                 Contemporary frameworks fall into three categories:
+Our main contributions are summarized as follows:                      Joint-Detection-Embedding (JDE) methods use unified net-
+                                                                       works achieving training efficiency but compromising spe-
+ • We introduce MFT25, a large-scale fish dataset for                  cialization (Zhang et al. 2021; Li, Li, and Li 2022); Trans-
+   MOT, featuring 15 diverse video sequences with 408,578              former approaches leverage attention mechanisms with high
+   meticulously annotated bounding boxes across 48,066                 performance but substantial overhead (Dosovitskiy et al.
+   frames, capturing various underwater environments, fish             2020; Li et al. 2024b); Separated-Detection-Embedding
+   species, and challenging conditions including occlusions,           (SDE) methods extend SORT (Bewley et al. 2016), decou-
+   rapid direction changes, and visually similar appear-               pling detectors from appearance models for balanced accu-
+   ances.                                                              racy and efficiency (Zhang et al. 2022; Cao et al. 2023; Xiao
+ • We propose SU-T, a specialized tracking framework fea-              et al. 2024; Fischer et al. 2023; Aharon, Orfaig, and Bo-
+   turing an Unscented Kalman Filter (UKF) optimized                   brovsky 2022; Yang et al. 2024). Recent innovations include
+   for non-linear fish swimming patterns and a novel Fish-             camera pose estimation (Yi et al. 2024), generative diffusion
+
+
+                                                                6460
+models (Luo et al. 2024), and pixel-wise trajectory propaga-                 Dataset BrackishMOT 3D-ZeF MFT22 MFT25 (Ours)
+tion (Zhao et al. 2022), but show limited underwater adapt-                  Clips          98           8       10          15
+ability and insufficient real-time performance for practical                 Tracks        638          32      234         223
+fish tracking applications.                                                  FPS            25          60       25          25
+Related Datasets MOT datasets require frame-by-frame                         Frames       14,017      14,398 9,100         48,066
+bounding box annotations with consistent identity informa-                   Boxes        49,364      86,452 155,437      408,578
+tion across extended video sequences, representing a sig-
+nificant annotation challenge (Dendorfer et al. 2020). Cur-                   Table 1: Quantitative comparison of MFT datasets.
+rent MOT research predominantly focuses on terrestrial
+domains, resulting in well-established benchmarks for hu-
+mans, vehicles, and animals, such as the MOT challenge se-                ated using DarkLabel software through manual selection
+ries (Dendorfer et al. 2021), DanceTrack (Sun et al. 2022),               and verification processes. The resulting MFT25 dataset en-
+BEE24 (Cao et al. 2025), and CTMC (Anjum and Gurari                       compasses 15 diverse video sequences containing 223 dis-
+2020).                                                                    tinct fish trajectories across 48,066 frames, with a total of
+   While several fish-oriented video datasets exist, including            408,578 precisely annotated bounding boxes. This repre-
+Fish4Knowledge, DeepFish, and SeaCLEF (Cui et al. 2024),                  sents a substantial advancement in scale, containing 2.6-8.3
+they present significant limitations for modern tracking ap-              times more annotated instances compared to previous fish
+plications. These early datasets typically suffer from low res-           tracking datasets. Table 1 presents a comprehensive statisti-
+olution, poor visibility conditions that obscure fish identi-             cal comparison with existing fish tracking benchmarks.
+ties, and inconsistent annotation formats that impede effec-                 Moreover, we analyze the distinctive movement charac-
+tive model training. Furthermore, other specialized datasets,             teristics of fish in our dataset through detailed quantitative
+such as FishTrack23 (Dawkins et al. 2024) and WebUOT-                     analysis in extended version.
+1M (Zhang et al. 2024), are designed for Single Object
+Tracking (SOT), a fundamentally different task that provides                              SU-T: A MFT Baseline
+annotations only for the initialized target. In contrast, MOT
+datasets require frame-by-frame annotations for all visible               Framework
+targets, along with consistent identity labels to enable long-            To address the unique challenges of MFT, we propose Scale-
+term association. The CFC dataset (Kay et al. 2022) uti-                  aware and Unscented Tracker (SU-T), a specialized baseline
+lizes sonar imaging, which represents a distinct data modal-              following the SDE paradigm. As illustrated in Fig. 4, our
+ity from the optical videos commonly used in aquacul-                     framework comprises three primary components: a detec-
+ture applications. More recent standardized fish tracking                 tor, an association module, and an optional Re-Identification
+datasets, including BrackishMOT (Pedersen et al. 2023),                   (Re-ID) module. The processing pipeline begins with video
+3D-ZeF (Pedersen et al. 2020), and MFT22 (Li et al. 2024b),               frames being fed into the detector, which generates bound-
+have emerged with consistent annotation protocols. How-                   ing boxes with corresponding confidence scores. These de-
+ever, these datasets remain limited in both environmental                 tections are then processed by the association module, where
+diversity and scale, typically featuring simplified scenarios             our specialized FishIoU metric calculates matching costs be-
+under controlled conditions. The absence of comprehensive,                tween detected boxes and predictions from the UKF. The
+high-quality, and standardized fish tracking datasets thus                Hungarian algorithm performs optimal assignment to update
+represents a critical bottleneck that constrains significant ad-          existing trajectories and establish new tracks when neces-
+vances in underwater MFT research.                                        sary. To address the challenge of visually similar fish, SU-T
+                                                                          integrates an optional Re-ID module that extracts discrimi-
+Dataset Construction                                                      native feature embeddings. These embeddings work syner-
+The MFT25 dataset was captured using imaging equip-                       gistically with the FishIoU metric during association, signif-
+ment of Canon EOSR6 and Sony α7M 3, across di-                            icantly enhancing tracking accuracy by maintaining consis-
+verse aquaculture environments. Recording locations en-                   tent identities even when fish exhibit nearly identical appear-
+compassed both industrial circulating water aquaculture                   ances.
+ponds and controlled laboratory tanks to ensure environmen-
+tal diversity. The dataset features multiple fish species with            Detector and Re-ID
+distinctly different morphologies, including commercially                 Considering the variability of fish movements and the sig-
+valuable groupers and ornamental koi at various develop-                  nificant scale variations due to varying distances from the
+mental stages, introducing substantial appearance variation.              camera, our tracker adopts a mainstream pyramid-based de-
+   To ensure comprehensive scenario coverage, we system-                  sign following (Zhang et al. 2022; Cao et al. 2023; Yang
+atically deployed multiple camera configurations, including               et al. 2024) and employs decoupled heads to predict point
+both overhead and horizontal perspectives, across varied il-              centers, bounding boxes, offsets, and confidence scores (Ge
+lumination conditions from daylight to nocturnal settings.                et al. 2021). The different decoupled heads share feature
+The dataset consists exclusively of authentic footage with-               parameters across pyramid levels. Additionally, an optional
+out synthetic augmentation, preserving the natural complex-               re-identification module continuously updates GeM Pooling
+ity of scenarios. All bounding box annotations were cre-                  through learnable parameters, outputting target appearance
+
+
+                                                                   6461
+Figure 4: The framework of SU-T. The pipeline consists of three main components: a detector, an association module, and
+an optional Re-ID module. The detector generates bounding boxes and confidence scores for each frame. The optional Re-
+ID module extracts feature embeddings to enhance tracking accuracy. The association module uses the FishIoU to calculate
+matching costs between detected boxes and predicted boxes from the UKF.
+
+
+                                                                                              p        
+                                                                              Xi+n = x −        (n + λ)P ,            i = 1, . . . , n   (3)
+                                                                                                                i
+                                                                        where λ = α2 (n + κ) − n is a scaling parameter, α controls
+                                                                            pof points, κis a secondary parameter (typically 3-n),
+                                                                        spread
+                                                                        and    (n + λ)P is the i-th column of the matrix square
+                                                                                           i
+                                                                        root.
+                                                                        Prediction Step Each sigma point is propagated through
+                                                                        the non-linear state transition function f at time step k:
+                                                                                       i           i
+Figure 5: Unscented Kalman Filter (UKF) motion model                                  Xk|k−1 = f (Xk−1 ),      i = 0, . . . , 2n         (4)
+used in SU-T for predicting fish movement in complex un-
+derwater environments.                                                                                 2n
+                                                                                                       X
+                                                                                                              i  i
+                                                                                           x̂k|k−1 =         wm Xk|k−1                   (5)
+                                                                                                       i=0
+features that are incorporated into the cost matrix for subse-                     2n
+quent association, thereby providing robust appearance sim-
+                                                                                   X
+                                                                        Pk|k−1 =               i
+                                                                                         wci [Xk|k−1             i
+                                                                                                     −x̂k|k−1 ][Xk|k−1 −x̂k|k−1 ]T +Qk
+ilarity cues for tracking.                                                         i=0
+                                                                                                                                (6)
+Unscented Kalman Filter                                                 where wmi
+                                                                                   and wci are weight coefficients for mean and co-
+The Unscented Kalman Filter (UKF) is particularly well-                 variance, and Qk is the process noise covariance.
+suited for tracking fish due to their non-linear motion pat-            Measurement Update Step The predicted sigma points
+terns, as shown in Fig. 5. Unlike standard Kalman Filter,               are transformed through the measurement function h:
+UKF uses a deterministic sampling technique to handle non-
+linearities. The three core mathematical components of our                          i
+                                                                                   Zk|k−1      i
+                                                                                          = h(Xk|k−1 ),         i = 0, . . . , 2n        (7)
+UKF implementation are as follows.
+                                                                                                       2n
+Sigma Points Generation For state vector x ∈ Rn with                                                   X
+                                                                                                              i  i
+covariance P, we generate 2n + 1 sigma points:                                             ẑk|k−1 =         wm Zk|k−1                   (8)
+                                                                                                       i=0
+
+                          X0 = x                           (1)                  2n
+                                                                                X
+                                                                        Pzz =               i
+                                                                                      wci [Zk|k−1              i
+                                                                                                  − ẑk|k−1 ][Zk|k−1 − ẑk|k−1 ]T + Rk
+                                                                                i=0
+                 p        
+        Xi = x +   (n + λ)P ,           i = 1, . . . , n   (2)                                                                           (9)
+                                   i
+
+
+                                                                 6462
+                                                                              where r1 = w                w2
+                                                                                            h1 and r2 = h2 are the aspect ratios of the two
+                                                                                              1
+
+
+          2n
+          X                                                                   boxes.
+ Pxz =                i
+                wci [Xk|k−1              i
+                            − x̂k|k−1 ][Zk|k−1 − ẑk|k−1 ]T (10)                 Additionally, we incorporate area ratio consistency, since
+          i=0
+                                                                              the size of the fish does not change abruptly between frames:
+
+                         Kk = Pxz P−1                          (11)                                     min(a1 , a2 )
+                                   zz                                                              αa =                             (20)
+                                                                                                       max(a1 , a2 )
+                                                                              where a1 = w1 × h1 and a2 = w2 × h2 are the areas of the
+                x̂k = x̂k|k−1 + Kk (zk − ẑk|k−1 )             (12)
+                                                                              two boxes.
+                                                                                For small targets, we apply a scale factor to reduce the
+                  Pk = Pk|k−1 − Kk Pzz KTk                     (13)           center distance penalty:
+where zk is the actual measurement, Rk is the measure-                                                         min(a1 ,a2 )
+
+ment noise covariance, Pzz and Pxz are the measurement                                           s = 1 − e− 1000                 (21)
+and cross-covariances, and Kk is the Kalman gain.                               The final FishIoU metric combines these components
+                                                                              with specific weights optimized for fish tracking:
+FishIoU: Scale-aware Association
+The unique morphology and movement patterns of fish                           FishIoU = ω1 · IoU + ω2 · cIoU + ω3 · αr + ω4 · αa − ω5 · s · dc
+present significant challenges for standard object associa-                                                                             (22)
+tion. We introduce Fish-Intersection-over-Union (FishIoU),                    where ω1 = 1.0, ω2 = 0.3, ω3 = 0.1, ω4 = 0.2, and
+a specialized association IoU that accounts for the elongated                 ω5 = 0.4 are weights determined empirically through ex-
+body structure, erratic motion patterns, and size variations                  tensive experiments.
+common in fish species.
+   Given two bounding boxes B1 = [x1 , y1 , x2 , y2 ] and                     Assocation
+B2 = [x′1 , y1′ , x′2 , y2′ ], we first compute the standard IoU as:          Our association strategy employs progressive confidence-
+                                                                              based processing that significantly reduces identity switches
+                                 |B1 ∩ B2 |                                   while maintaining computational efficiency. Algorithm 1
+                        IoU =                                  (14)
+                                 |B1 ∪ B2 |                                   presents the complete multi-level cascade tracking process,
+                                                                              which integrates our UKF motion prediction and FishIoU
+where |B1 ∩ B2 | represents the intersection area and |B1 ∪
+                                                                              matching with a cascaded association strategy for aquatic
+B2 | the union area. Then, to account for fish morphology,
+                                                                              environments.
+we incorporate a center distance penalty:
+                                                                                 Building upon frameworks from HybridSORT (Yang
+                        (cx − c′x )2 + (cy − c′y )2                           et al. 2024), we adopt dual-confidence matching of Byte-
+                 dc =                                          (15)           Track (Zhang et al. 2022) and heuristic observation-centric
+                                   d2diag                                     recovery of OC-SORT (Cao et al. 2023), and implements
+where (cx , cy ) and (c′x , c′y ) are the centers of B1 and B2 re-            three association stages. In the first stage, high-confidence
+spectively, and d2diag is the squared diagonal length of the en-              detections are matched with existing tracks using our spe-
+                                                                              cialized FishIoU, establishing reliable primary associations
+closing box. Considering fish bodies typically have an elon-                  even when fish exhibit rapid direction changes. The second
+gated structure with important features concentrated in the                   stage associates remaining tracks with low-confidence de-
+front, we define a central region for each box with asymmet-                  tections, effectively recovering temporarily occluded targets
+ric insets to emphasize this characteristic:                                  while filtering false positives induced by water turbidity and
+                                                                              reflections. The final stage attempts to reconnect tracks with
+  B1c = [x1 + αw1 , y1 + βh1 , x2 − γw1 , y2 − βh1 ] (16)                     their historical appearances, addressing the frequent, abrupt
+                                                                              directional changes and non-linear swimming patterns char-
+  B2c = [x′1 + αw2 , y1′ + βh2 , x′2 − γw2 , y2′ − βh2 ] (17)                 acteristic of fish locomotion.
+where w1 , h1 and w2 , h2 are the width and height of B1 and                     For cost calculation, our framework integrates both spa-
+B2 respectively, and α, β, γ are constant factors determined                  tial and appearance information when available. Spatially,
+empirically based on fish morphological characteristics. By                   the FishIoU outperforms standard IoU by incorporating
+default, α = 0.15, β = 0.3, and γ = 0.25. The central IoU                     fish-specific morphological features into the matching pro-
+is then calculated as:                                                        cess. When enabled, the Re-ID module provides discrimina-
+                                                                              tive appearance embeddings that effectively differentiate be-
+                             |B1c ∩ B2c |                                     tween visually similar individuals swimming in close prox-
+                        cIoU =                          (18)                  imity.
+                             |B1c ∪ B2c |
+  To account for consistent fish orientation, we consider the                                        Experiments
+aspect ratio consistency:
+                                                                              Implementation Details
+                             min(r1 , r2 )                                    For all experiments, we employed the same YOLOX (Ge
+                        αr =                                   (19)           et al. 2021) detector and the same Re-ID network (He
+                             max(r1 , r2 )
+
+                                                                       6463
+ Algorithm 1: Multi-Level Cascade Tracking                           Benchmark Results
+  Input: Detections D with scores, Existing tracks T                 We compare our proposed SU-T baseline with state-of-the-
+  Output: Updated tracks T                                           art MOT and MFT methods on the MFT25 dataset. Table 2
+  /* Prediction */                                                   presents the comprehensive comparison results. Our method
+  for Tj ∈ T do                                                      achieves the best overall performance with 34.1 HOTA. The
+       B̂j , sj ← UKF.predict(Tj ) /* Predict box and                superiority of our method is particularly evident in associa-
+        score */                                                     tion metrics, where SU-T achieves the highest IDF1 score of
+  end                                                                44.6 with Re-ID module, significantly outperforming other
+  /* First Association: High-confidence */                           methods. This demonstrates that our approach better pre-
+  Dhigh ← {di ∈ D : score(di ) > τhigh }                             serves fish identities across frames, enabling more accurate
+  C ← FishIoU(Dhigh , {B̂j }) /* Base cost */                        trajectory analysis in challenging underwater scenarios.
+  if Use Re-ID then                                                     Although Transformer-based TrackFormer (Meinhardt
+       C ← ω1 C + ω2 EmbeddingDistance(Dhigh , T )                   et al. 2022) achieves the highest MOTA score of 74.6.
+  end                                                                However, it exhibits relatively weaker performance in iden-
+  M1 , UD , UT ← Hungarian(−C)                                       tity preservation metrics such as IDF1 and AssA. Be-
+  for (i, j) ∈ M1 do                                                 sides, transformer-based trackers impose substantial compu-
+       Tj .update(di )                                               tational overhead, rendering them impractical for real-time
+  end                                                                underwater monitoring applications. The performance gap
+  /* Second Association: Low-confidence */                           between conventional terrestrial-focused trackers and SU-
+  Dlow ← {di ∈ D : τlow < score(di ) < τhigh }                       T validates our hypothesis that underwater tracking scenar-
+                                                                     ios necessitate domain-specific adaptations. Visual compar-
+  Ciou ← FishIoU(Dlow , {B̂j : Tj ∈ UT })
+                                                                     isons of various tracking methods on MFT25 are illustrated
+  if Use Re-ID then
+       Ciou ← Ciou + λ· EmbeddingDistance(Dlow ,                     in Fig. 6.
+        {Tj ∈ UT })                                                     In addition, we conducted additional experiments to eval-
+                                                                     uate the generalization capability of SU-T on mainstream
+  end
+                                                                     land-based tracking benchmarks MOT17 and MOT20 (Den-
+  M2 ← Hungarian(−Ciou )
+                                                                     dorfer et al. 2021). Our baseline achieved 60.4 and 56.5
+  for (i, j) ∈ M2 where Ciou [i, j] > τiou do
+                                                                     HOTA, respectively.
+       Tj .update(Dlow [i]) /* Update state */
+       UT ← UT \ {Tj }
+  end
+  /* Third Association: Last-chance */
+  Clast ← FishIoU(Dhigh [UD ],
+    {Tj .last observation : Tj ∈ UT })
+  for (i, j) ∈ Hungarian(−Clast ) where
+    Clast [i, j] > τiou do
+       Tj .update(Dhigh [UD [i]])
+       Remove i from UD , Tj from UT
+  end
+  /* Finalize */
+  Update all Tj ∈ UT without observation
+  Initialize new tracks from Dhigh [UD ]
+  Remove tracks with time since update > max age
+  return T                                                           Figure 6: Tracking performance of various trackers on the
+                                                                     MFT25 dataset. F NUM denotes false tracked number, in-
+                                                                     cluding IDFN, IDFP, and IDs. Best viewed in color.
+
+et al. 2023) for SDE-based models, trained with con-
+sistent hyperparameter configurations following the estab-           Ablation Studies
+lished protocols from ByteTrack (Zhang et al. 2022) and              We conducted extensive ablation experiments to evaluate
+BoT-SORT (Aharon, Orfaig, and Bobrovsky 2022). All                   each component. Table 3 reports the influence of different
+models were trained on the MFT25 training set using an               Re-ID models on tracking performance. Among all candi-
+NVIDIA A100 GPU, with performance evaluated on the test              dates, the SBS-S101 (He et al. 2023) backbone delivers the
+set using standard MOT metrics, including the comprehen-             best overall results with a HOTA score of 33.8. Interestingly,
+sive HOTA (Luiten et al. 2021) metric alongside traditional          the IBN-based variants (Pan et al. 2018) do not yield consis-
+CLEAR (Bernardin and Stiefelhagen 2008) metrics such as              tent gains, indicating that domain adaptation strategies tai-
+MOTA, IDF1, and ID switches (IDs). Additional experi-                lored for terrestrial settings may not transfer well to under-
+ments, details and discussions are provided in the extended          water conditions. Therefore, we adopt SBS-S101 as our final
+version.                                                             Re-ID module, which offers a strong balance of accuracy,
+
+
+                                                              6464
+ Method                                               Class HOTA↑ IDF1↑ MOTA↑ AssA↑ DetA↑ IDs↓ IDFP↓ IDFN↓ Frag↓
+ FairMOT (Zhang et al. 2021)                    JDE                22.226   26.867   47.509   13.910 35.606 939 58198 113393        3768
+ CMFTNet (Li, Li, and Li 2022)                  JDE                22.432   27.659   46.365   14.278 35.452 1301 64754 111263       2769
+ Deep-OC-SORT (Maggiolino et al. 2023)          SDE                24.848   34.176   46.721   17.537 35.373 550 53478 104024        3659
+ OC-SORT (Cao et al. 2023)                      SDE                25.017   34.620   46.706   17.783 35.369 550 52934 103495        3651
+ TFMFT (Li et al. 2024b)                       TransF              25.440   33.950   49.725   17.112 38.059 719 63125 102378        3251
+ BoT-SORT (Aharon, Orfaig, and Bobrovsky 2022) SDE                 26.848   36.847   49.108   19.446 37.241 500 57581 99181         2704
+ TransCenter (Xu et al. 2022)                  TransF              27.896   30.278   68.693   30.255 30.301 807 101223 101002       1992
+ SORT (Bewley et al. 2016)                      SDE                29.063   34.119   69.038   16.952 50.195 778 88928 96815         1726
+ TrackFormer (Meinhardt et al. 2022)           TransF              30.361   35.285   74.609   17.661 52.649 718 89391 94720         1729
+ TransTrack (Sun et al. 2020)                  TransF              30.426   35.215   68.983   18.525 50.458 1116 96045 93418        2588
+ ByteTrack (Zhang et al. 2022)                  SDE                31.758   40.355   69.586   20.392 49.712 489 80765 87866         1555
+ HybridSORT (Yang et al. 2024)                  SDE                32.258   38.421   68.905   20.936 49.992 613 85924 90022         1931
+ HybridSORT† (Yang et al. 2024)                 SDE                32.705   41.727   69.167   21.701 49.697 562 79189 85830         1963
+ SU-T (Ours)                                    SDE                33.351   41.717   68.450   22.425 49.943 607 83111 84814         2006
+ SU-T† (Ours)                                   SDE                34.067   44.643   68.958   23.594 49.531 544 76440 81304         2011
+
+Table 2: Comparison of different tracking methods on the MFT25 dataset. † indicates the integration of Re-ID module. TransF
+denotes the Transformer-based model. The best two results are bolded and underlined respectively. Same as follows.
+
+
+  Method     IBN HOTA↑ IDF1↑ MOTA↑ AssA↑ IDs↓                                uates different motion models. The UKF consistently sur-
+  SBS-R50             30.950    39.937    68.780   19.599    713
+                                                                             passes the standard Kalman Filter (KF), Adaptive Kalman
+  SBS-R50      ✓      30.560    37.919    68.909   19.010    659             Filter (AKF), and Strong Tracking Filter (STF) under both
+  SBS-R101            30.270    38.104    68.796   18.599    678             HMIoU (Yang et al. 2024) and FishIoU association, con-
+  SBS-R101     ✓      30.684    39.996    68.912   19.134    638             firming the advantage of non-linear modeling for fish track-
+  SBS-S50             32.705    41.727    69.167   21.701    562             ing. The best performance is achieved by UKF with FishIoU
+  SBS-S50      ✓      32.412    40.977    69.030   21.183    558             and Re-ID, reaching 34.1 HOTA and 44.6 IDF1.
+  SBS-S101            33.842    43.748    69.043   23.154    550
+  SBS-S101     ✓      31.900    40.201    69.212   20.610    584
+                                                                              Method HMI FiI HOTA↑ IDF1↑ MOTA↑ AssA↑ IDs↓
+Table 3: Results on different Re-ID models with standard                      KF         ✓         32.258   38.421   68.905   20.936 613
+Kalman Filter and IoU association.                                            AKF        ✓         28.769   33.689   67.827   16.954 1031
+                                                                              STF        ✓         31.105   36.911   69.161   19.445 667
+                                                                              UKF        ✓         32.406   38.408   68.933   21.096 609
+stability, and general applicability across challenging low-                  UKF†       ✓         33.737   43.880   69.057   23.063 528
+light underwater sequences.                                                   KF               ✓   33.051   41.041   68.503   22.022 612
+                                                                              AKF              ✓   22.551   24.017   65.535   10.682 2368
+                                                                              STF              ✓   31.601   38.137   68.694   20.153 663
+ Method     HOTA↑ IDF1↑ MOTA↑ AssA↑ IDs↓ IDFP↓                                UKF              ✓   33.201   41.644   68.451   22.261 609
+ Center      28.865    37.348    66.313    17.410 1273      88585             UKF†             ✓   34.067   44.643   68.958   23.594 544
+ IoU         32.790    40.098    68.839    21.573 579       84648
+ CIoU        30.720    39.598    67.425    19.325 727       87422            Table 5: Ablation study on different motion models and as-
+ DIoU        30.764    39.575    67.519    19.326 728       87344            sociation IoUs. HMI and FiI denote the use of HMIoU and
+ HMIoU       32.258    38.421    68.905    20.936 613       85924
+ GIoU        32.885    39.957    68.798    21.686 573       84896
+                                                                             FishIoU, respectively.
+ FishIoU     33.351    41.717    68.450    22.425 607       83111
+ FishIoU†    33.581    43.268    68.989    22.779 547       78473
+
+Table 4: Ablation study comparing different IoU for associ-
+                                                                                                    Conclusion
+ation cost calculation. Center and IoU represent the center                  In this paper, we introduce a unified underwater MFT bench-
+points distance and the standard IoU, respectively.                          mark and a specialized tracking framework for fish morphol-
+                                                                             ogy and erratic swimming patterns. Our baseline achieves
+  Table 4 presents a comparison of association metrics. Our                  state-of-the-art performance with 34.1 HOTA, significantly
+FishIoU achieves the best results, with 33.4 HOTA and 41.7                   outperforming other trackers. Statistical analysis reveals
+IDF1, outperforming standard IoU variants (Zheng et al.                      fundamental differences between fish and terrestrial tracking
+2021, 2020; Yang et al. 2024; Rezatofighi et al. 2019). In-                  scenarios, highlighting the necessity for specialized under-
+corporating the Re-ID module further boosts performance                      water approaches. However, significant challenges remain in
+across all metrics, highlighting FishIoU’s effectiveness in                  handling visually similar fish appearances, extreme density
+handling fish-specific morphology and motion. Table 5 eval-                  scenarios, and highly erratic swimming patterns.
+
+
+                                                                      6465
+                  Acknowledgments                                      Dendorfer, P.; Rezatofighi, H.; Milan, A.; Shi, J.; Cremers,
+                                                                       D.; Reid, I.; Roth, S.; Schindler, K.; and Leal-Taixé, L. 2020.
+The paper is supported in part by Beijing Smart Agriculture
+                                                                       Mot20: A benchmark for multi object tracking in crowded
+Innovation Consortium Project (BAIC10-2025). The authors
+                                                                       scenes. arXiv preprint arXiv:2003.09003.
+gratefully acknowledge National Innovation Center for Dig-
+ital Fishery - China Agricultural University, Key Laboratory           Dosovitskiy, A.; Beyer, L.; Kolesnikov, A.; Weissenborn,
+of Agricultural Informatization Standardization - MARA, P.             D.; Zhai, X.; Unterthiner, T.; Dehghani, M.; Minderer, M.;
+R. China, Key Laboratory of Smart Farming Technologies                 Heigold, G.; Gelly, S.; et al. 2020. An image is worth 16x16
+for Aquatic Animals and Livestock - MARA, P. R. China,                 words: Transformers for image recognition at scale. arXiv
+National Innovation Center for Digital Agricultural Products           preprint arXiv:2010.11929.
+Circulation - MARA, P. R. China, and State Key Labora-                 Fischer, T.; Huang, T. E.; Pang, J.; Qiu, L.; Chen, H.; Dar-
+tory of Efficient Utilization of Agricultural Water Resources          rell, T.; and Yu, F. 2023. Qdtrack: Quasi-dense similarity
+- China Agricultural University. Weiran Li gratefully ac-              learning for appearance-only multiple object tracking. IEEE
+knowledges financial support from the China Scholarship                Transactions on Pattern Analysis and Machine Intelligence.
+Council (No. 202406350102).                                            Ge, Z.; Liu, S.; Wang, F.; Li, Z.; and Sun, J. 2021.
+                                                                       Yolox: Exceeding yolo series in 2021. arXiv preprint
+                       References                                      arXiv:2107.08430.
+                                                                       Hassan, S.; Mujtaba, G.; Rajput, A.; and Fatima, N. 2024.
+Aharon, N.; Orfaig, R.; and Bobrovsky, B.-Z. 2022. BoT-                Multi-object tracking: a systematic literature review. Multi-
+SORT: Robust associations multi-pedestrian tracking. arXiv             media Tools and Applications, 83(14): 43439–43492.
+preprint arXiv:2206.14651.
+                                                                       He, L.; Liao, X.; Liu, W.; Liu, X.; Cheng, P.; and Mei, T.
+Anjum, S.; and Gurari, D. 2020. CTMC: Cell tracking                    2023. Fastreid: A pytorch toolbox for general instance re-
+with mitosis detection dataset challenge. In Proceedings of            identification. In Proceedings of the 31st ACM International
+the IEEE/CVF Conference on Computer Vision and Pattern                 Conference on Multimedia, 9664–9667.
+Recognition Workshops, 982–983.                                        Huang, T.-W.; Hwang, J.-N.; Romain, S.; and Wallace, F.
+Bernardin, K.; and Stiefelhagen, R. 2008. Evaluating mul-              2018. Fish tracking and segmentation from stereo videos on
+tiple object tracking performance: the clear mot metrics.              the wild sea surface for electronic monitoring of rail fish-
+EURASIP Journal on Image and Video Processing, 2008:                   ing. IEEE Transactions on Circuits and Systems for Video
+1–10.                                                                  Technology, 29(10): 3146–3158.
+Bewley, A.; Ge, Z.; Ott, L.; Ramos, F.; and Upcroft, B. 2016.          Jager, J.; Wolff, V.; Fricke-Neuderth, K.; Mothes, O.; and
+Simple online and realtime tracking. In 2016 IEEE interna-             Denzler, J. 2017. Visual fish tracking: Combining a two-
+tional conference on image processing (ICIP), 3464–3468.               stage graph approach with CNN-features. In OCEANS
+IEEE.                                                                  2017-Aberdeen, 1–6. IEEE.
+Cao, J.; Pang, J.; Weng, X.; Khirodkar, R.; and Kitani, K.             Kay, J.; Kulits, P.; Stathatos, S.; Deng, S.; Young, E.; Beery,
+2023. Observation-centric sort: Rethinking sort for robust             S.; Van Horn, G.; and Perona, P. 2022. The caltech fish
+multi-object tracking. In Proceedings of the IEEE/CVF con-             counting dataset: A benchmark for multiple-object tracking
+ference on computer vision and pattern recognition, 9686–              and counting. In European Conference on Computer Vision,
+9696.                                                                  290–311. Springer.
+                                                                       Lei, Y.; Zhu, H.; Yuan, J.; Xiang, G.; Zhong, X.; and He,
+Cao, X.; Zheng, Y.; Yao, Y.; Qin, H.; Cao, X.; and Guo,                S. 2024. DenseTrack: Drone-based Crowd Tracking via
+S. 2025. TOPIC: A Parallel Association Paradigm for                    Density-aware Motion-appearance Synergy. In Proceedings
+Multi-Object Tracking under Complex Motions and Diverse                of the 32nd ACM International Conference on Multimedia,
+Scenes. IEEE Transactions on Image Processing.                         2050–2058.
+Cui, M.; Liu, X.; Liu, H.; Zhao, J.; Li, D.; and Wang, W.              Li, G.; Jian, Y.; Jian, Y.; Yan, Y.; Yan, Y.; Wang, H.; and
+2024. Fish Tracking, Counting, and Behaviour Analysis                  Wang, H. 2024a. GLATrack: Global and Local Awareness
+in Digital Aquaculture: A Comprehensive Review. arXiv                  for Open-Vocabulary Multiple Object Tracking. In Proceed-
+preprint arXiv:2406.17800.                                             ings of the 32nd ACM International Conference on Multime-
+Dawkins, M.; Prior, J.; Lewis, B.; Faillettaz, R.; Banez,              dia, 2457–2466.
+T.; Salvi, M.; Rollo, A.; Simon, J.; Campbell, M.; Lucero,             Li, W.; Li, F.; and Li, Z. 2022. CMFTNet: Multiple fish
+M.; et al. 2024. FishTrack23: An Ensemble Underwater                   tracking based on counterpoised JointNet. Computers and
+Dataset for Multi-Object Tracking. In Proceedings of the               electronics in agriculture, 198: 107018.
+IEEE/CVF Winter Conference on Applications of Computer                 Li, W.; Liu, Y.; Wang, W.; Li, Z.; and Yue, J. 2024b. TFMFT:
+Vision, 7167–7176.                                                     Transformer-based multiple fish tracking. Computers and
+Dendorfer, P.; Osep, A.; Milan, A.; Schindler, K.; Cremers,            Electronics in Agriculture, 217: 108600.
+D.; Reid, I.; Roth, S.; and Leal-Taixé, L. 2021. Motchal-             Li, X.; Wei, Z.; Huang, L.; Nie, J.; Zhang, W.; and Wang, L.
+lenge: A benchmark for single-camera multiple target track-            2018. Real-time underwater fish tracking based on adaptive
+ing. International Journal of Computer Vision, 129: 845–               multi-appearance model. In 2018 25th IEEE international
+881.                                                                   conference on image processing (ICIP), 2710–2714. IEEE.
+
+
+                                                                6466
+Liu, C.; Li, H.; and Wang, Z. 2023. FastTrack: A Highly                   the IEEE/CVF conference on computer vision and pattern
+Efficient and Generic GPU-Based Multi-object Tracking                     recognition, 20993–21002.
+Method with Parallel Kalman Filter. International Journal                 Sun, P.; Cao, J.; Jiang, Y.; Zhang, R.; Xie, E.; Yuan, Z.;
+of Computer Vision, 1–21.                                                 Wang, C.; and Luo, P. 2020. Transtrack: Multiple object
+Liu, Y.; Wu, J.; and Fu, Y. 2023. Collaborative Tracking                  tracking with transformer. arXiv preprint arXiv:2012.15460.
+Learning for Frame-Rate-Insensitive Multi-Object Tracking.                Wang, H.; Zhang, S.; Zhao, S.; Wang, Q.; Li, D.; and Zhao,
+In Proceedings of the IEEE/CVF International Conference                   R. 2022. Real-time detection and tracking of fish abnormal
+on Computer Vision, 9964–9973.                                            behavior based on improved YOLOV5 and SiamRPN++.
+Liu, Z.; Wang, X.; Wang, C.; Liu, W.; and Bai, X. 2025.                   Computers and Electronics in Agriculture, 192: 106512.
+Sparsetrack: Multi-object tracking by performing scene de-                Xiao, C.; Cao, Q.; Luo, Z.; and Lan, L. 2024. Mambatrack: a
+composition based on pseudo-depth. IEEE Transactions on                   simple baseline for multiple object tracking with state space
+Circuits and Systems for Video Technology.                                model. In Proceedings of the 32nd ACM International Con-
+Luiten, J.; Osep, A.; Dendorfer, P.; Torr, P.; Geiger, A.; Leal-          ference on Multimedia, 4082–4091.
+Taixé, L.; and Leibe, B. 2021. Hota: A higher order metric               Xu, Y.; Ban, Y.; Delorme, G.; Gan, C.; Rus, D.; and
+for evaluating multi-object tracking. International journal               Alameda-Pineda, X. 2022. TransCenter: Transformers with
+of computer vision, 129: 548–578.                                         dense representations for multiple-object tracking. IEEE
+Luo, R.; Song, Z.; Ma, L.; Wei, J.; Yang, W.; and Yang,                   transactions on pattern analysis and machine intelligence,
+M. 2024. Diffusiontrack: Diffusion model for multi-object                 45(6): 7820–7835.
+tracking. In Proceedings of the AAAI Conference on Artifi-                Yang, M.; Han, G.; Yan, B.; Zhang, W.; Qi, J.; Lu, H.; and
+cial Intelligence, volume 38, 3991–3999.                                  Wang, D. 2024. Hybrid-sort: Weak cues matter for online
+Maggiolino, G.; Ahmad, A.; Cao, J.; and Kitani, K. 2023.                  multi-object tracking. In Proceedings of the AAAI Confer-
+Deep oc-sort: Multi-pedestrian tracking by adaptive re-                   ence on Artificial Intelligence, volume 38, 6504–6512.
+identification. In 2023 IEEE International conference on                  Yi, K.; Luo, K.; Luo, X.; Huang, J.; Wu, H.; Hu, R.; and Hao,
+image processing (ICIP), 3025–3029. IEEE.                                 W. 2024. Ucmctrack: Multi-object tracking with uniform
+Meinhardt, T.; Kirillov, A.; Leal-Taixe, L.; and Feichten-                camera motion compensation. In Proceedings of the AAAI
+hofer, C. 2022. Trackformer: Multi-object tracking with                   conference on artificial intelligence, volume 38, 6702–6710.
+transformers. In Proceedings of the IEEE/CVF conference                   Zeng, Y.; Yang, X.; Pan, L.; Zhu, W.; Wang, D.; Zhao, Z.;
+on computer vision and pattern recognition, 8844–8854.                    Liu, J.; Sun, C.; and Zhou, C. 2023. Fish school feeding
+Pan, X.; Luo, P.; Shi, J.; and Tang, X. 2018. Two at once: En-            behavior quantification using acoustic signal and improved
+hancing learning and generalization capacities via ibn-net.               Swin Transformer. Computers and Electronics in Agricul-
+In Proceedings of the european conference on computer vi-                 ture, 204: 107580.
+sion (ECCV), 464–479.                                                     Zhang, C.; Liu, L.; Huang, G.; Wen, H.; Zhou, X.; and
+Pedersen, M.; Haurum, J. B.; Bengtson, S. H.; and Moes-                   Wang, Y. 2024. Webuot-1m: Advancing deep underwa-
+lund, T. B. 2020. 3d-zef: A 3d zebrafish tracking bench-                  ter object tracking with a million-scale benchmark. arXiv
+mark dataset. In Proceedings of the IEEE/CVF conference                   preprint arXiv:2405.19818.
+on computer vision and pattern recognition, 2426–2436.                    Zhang, Y.; Sun, P.; Jiang, Y.; Yu, D.; Weng, F.; Yuan, Z.;
+Pedersen, M.; Lehotskỳ, D.; Nikolov, I.; and Moeslund,                   Luo, P.; Liu, W.; and Wang, X. 2022. Bytetrack: Multi-
+T. B. 2023. Brackishmot: The brackish multi-object track-                 object tracking by associating every detection box. In Eu-
+ing dataset. In Scandinavian Conference on Image Analysis,                ropean conference on computer vision, 1–21. Springer.
+17–33. Springer.                                                          Zhang, Y.; Wang, C.; Wang, X.; Zeng, W.; and Liu, W. 2021.
+Rezatofighi, H.; Tsoi, N.; Gwak, J.; Sadeghian, A.; Reid, I.;             Fairmot: On the fairness of detection and re-identification in
+and Savarese, S. 2019. Generalized intersection over union:               multiple object tracking. International journal of computer
+A metric and a loss for bounding box regression. In Pro-                  vision, 129: 3069–3087.
+ceedings of the IEEE/CVF conference on computer vision                    Zhao, Z.; Wu, Z.; Zhuang, Y.; Li, B.; and Jia, J. 2022. Track-
+and pattern recognition, 658–666.                                         ing objects as pixel-wise distributions. In European Confer-
+Seidenschwarz, J.; Brasó, G.; Serrano, V. C.; Elezi, I.; and             ence on Computer Vision, 76–94. Springer.
+Leal-Taixé, L. 2023. Simple cues lead to a strong multi-                 Zheng, Z.; Wang, P.; Liu, W.; Li, J.; Ye, R.; and Ren, D.
+object tracker. In Proceedings of the IEEE/CVF conference                 2020. Distance-IoU loss: Faster and better learning for
+on computer vision and pattern recognition, 13813–13823.                  bounding box regression. In Proceedings of the AAAI con-
+Shevchenko, V.; Eerola, T.; and Kaarna, A. 2018. Fish de-                 ference on artificial intelligence, volume 34, 12993–13000.
+tection from low visibility underwater videos. In 2018 24th               Zheng, Z.; Wang, P.; Ren, D.; Liu, W.; Ye, R.; Hu, Q.; and
+International Conference on Pattern Recognition (ICPR),                   Zuo, W. 2021. Enhancing geometric factors in model learn-
+1971–1976. IEEE.                                                          ing and inference for object detection and instance segmen-
+Sun, P.; Cao, J.; Jiang, Y.; Yuan, Z.; Bai, S.; Kitani, K.; and           tation. IEEE transactions on cybernetics, 52(8): 8574–8586.
+Luo, P. 2022. Dancetrack: Multi-object tracking in uni-
+form appearance and diverse motion. In Proceedings of
+
+
+                                                                   6467
+

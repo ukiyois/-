@@ -1,0 +1,15 @@
+fast_reid/fastreid/data/build.py             | 13 ++++++-----
+ fast_reid/fastreid/evaluation/rank.py        |  2 +-
+ fast_reid/fastreid/evaluation/testing.py     |  3 ++-
+ tools/su_tracker.py                          |  2 +-
+ trackers/SUT_UKF.py                          | 34 ++++++++++++++++------------
+ trackers/SUT_reid_UKF.py                     | 22 +++++++++---------
+ trackers/association.py                      |  4 ++--
+ trackers/byte_tracker/byte_tracker.py        |  2 +-
+ trackers/byte_tracker/byte_tracker_public.py |  2 +-
+ trackers/byte_tracker/byte_tracker_score.py  |  2 +-
+ trackers/byte_tracker/matching.py            | 16 ++++++-------
+ utils/args.py                                | 16 +++++++++----
+ yolox/data/datasets/mot.py                   |  5 +++-
+ yolox/evaluators/mot_evaluator.py            |  9 ++++++--
+ 14 files changed, 77 insertions(+), 55 deletions(-)

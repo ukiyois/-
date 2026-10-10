@@ -1,0 +1,37 @@
+2026-10-10 14:29:57 | INFO     | __main__:78 - Args: Namespace(expn='SU-T-ReID-Smoke10-A02', name=None, dist_backend='nccl', output_dir='D:\\Dsektop\\��ҵCV\\SU-T-Reproduction\\runs', dist_url=None, batch_size=1, devices=1, local_rank=0, num_machines=1, machine_rank=0, exp_file='..\\SU-T-Reproduction\\configs\\SU-T-ReID-Smoke10.py', fp16=True, fuse=False, trt=False, test=False, speed=False, opts=[], ckpt='D:\\Dsektop\\��ҵCV\\Pretrained\\Checkpoint.pth.tar', conf=0.1, nms=0.7, tsize=None, seed=None, track_thresh=0.6, iou_thresh=0.25, min_hits=3, inertia=0.05, deltat=3, track_buffer=30, match_thresh=0.9, min_box_area=100, gt_type='_val_half', mot20=False, public=False, asso='fishiou', use_byte=True, TCM_first_step=True, TCM_byte_step=True, TCM_first_step_weight=1.0, TCM_byte_step_weight=1.0, with_reid=True, EG_weight_high_score=1.3, EG_weight_low_score=1.2, low_thresh=0.1, high_score_matching_thresh=0.8, low_score_matching_thresh=0.5, alpha=0.8, with_fastreid=True, fast_reid_config='fast_reid/configs/SBS_S101.yml', fast_reid_weights='D:\\Dsektop\\��ҵCV\\Pretrained\\ReID-Checkpoint.pth', with_longterm_reid=False, longterm_reid_weight=0.0, longterm_reid_weight_low=0.0, with_longterm_reid_correction=True, longterm_reid_correction_thresh=0.4, longterm_reid_correction_thresh_low=0.4, longterm_bank_length=30, adapfs=False, ECC=False, raw_results_path='exps/permatrack_kitti_test/', out_path=None, dataset='mft25', hp=False, demo_type='image', path='./videos/demo.mp4', demo_dancetrack=False, camid=0, save_result=False, aspect_ratio_thresh=1.6, device='gpu')
+2026-10-10 14:29:58 | INFO     | __main__:88 - Model Summary: Params: 99.00M, Gflops: 793.21
+2026-10-10 14:29:58 | INFO     | yolox.data.datasets.mot:41 - loading annotations into memory...
+2026-10-10 14:29:58 | INFO     | yolox.data.datasets.mot:41 - Done (t=0.00s)
+2026-10-10 14:29:58 | INFO     | pycocotools.coco:86 - creating index...
+2026-10-10 14:29:58 | INFO     | pycocotools.coco:86 - index created!
+2026-10-10 14:29:58 | INFO     | __main__:109 - loading checkpoint
+2026-10-10 14:29:58 | INFO     | __main__:114 - loaded checkpoint done.
+2026-10-10 14:30:30 | INFO     | utils.utils:32 - save results to D:\Dsektop\��ҵCV\SU-T-Reproduction\runs\SU-T-ReID-Smoke10-A02\SU-T-ReID-Smoke10-A02_val_EGWeightHigh1.3_EGWeightLow1.2_WithLongTermReIDCorrectionTrue_LongTermReIDCorrectionThresh0.4_LongTermReIDCorrectionThreshLow0.4_IoUThresh0.25_ScoreDifInterval1.0_SecScoreDifInterval1.0\BT-001.txt
+2026-10-10 14:30:31 | INFO     | yolox.evaluators.mot_evaluator:1694 - Evaluate in main process...
+2026-10-10 14:30:31 | INFO     | yolox.evaluators.mot_evaluator:1723 - Loading and preparing results...
+2026-10-10 14:30:31 | INFO     | yolox.evaluators.mot_evaluator:1723 - DONE (t=0.02s)
+2026-10-10 14:30:31 | INFO     | pycocotools.coco:367 - creating index...
+2026-10-10 14:30:31 | INFO     | pycocotools.coco:367 - index created!
+2026-10-10 14:30:31 | INFO     | yolox.evaluators.mot_evaluator:1731 - Running per image evaluation...
+2026-10-10 14:30:31 | INFO     | yolox.evaluators.mot_evaluator:1731 - Evaluate annotation type *bbox*
+2026-10-10 14:30:31 | INFO     | yolox.evaluators.mot_evaluator:1731 - DONE (t=0.01s).
+2026-10-10 14:30:31 | INFO     | yolox.evaluators.mot_evaluator:1732 - Accumulating evaluation results...
+2026-10-10 14:30:31 | INFO     | yolox.evaluators.mot_evaluator:1732 - DONE (t=0.00s).
+2026-10-10 14:30:31 | INFO     | __main__:152 - 
+Average forward time: 530.66 ms, Average track time: 8.55 ms, Average inference time: 539.22 ms
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.481
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.891
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.497
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = -1.000
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.042
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.526
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.074
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.526
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.529
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = -1.000
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.040
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.583
+
+2026-10-10 14:30:31 | INFO     | __main__:154 - Completed
+LAUNCHER_EXIT_CODE=0
+RUN_STATUS=COMPLETED

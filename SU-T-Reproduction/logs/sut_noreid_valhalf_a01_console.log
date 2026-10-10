@@ -1,0 +1,36 @@
+2026-10-10 16:18:17 | INFO     | __main__:78 - Args: Namespace(expn='SU-T-NoReID-ValHalf-A01', name=None, dist_backend='nccl', output_dir='D:\\Dsektop\\��ҵCV\\SU-T-Reproduction\\runs', dist_url=None, batch_size=1, devices=1, local_rank=0, num_machines=1, machine_rank=0, exp_file='..\\SU-T-Reproduction\\configs\\SU-T-ValHalf-NoReID.py', fp16=True, fuse=False, trt=False, test=False, speed=False, opts=[], ckpt='D:\\Dsektop\\��ҵCV\\Pretrained\\Checkpoint.pth.tar', conf=0.1, nms=0.7, tsize=None, seed=None, track_thresh=0.6, iou_thresh=0.25, min_hits=3, inertia=0.05, deltat=3, track_buffer=30, match_thresh=0.9, min_box_area=100.0, gt_type='_val_half', mot20=False, public=False, asso='fishiou', use_byte=True, TCM_first_step=True, TCM_byte_step=True, TCM_first_step_weight=1.0, TCM_byte_step_weight=1.0, with_reid=False, EG_weight_high_score=0.0, EG_weight_low_score=0.0, low_thresh=0.1, high_score_matching_thresh=0.8, low_score_matching_thresh=0.5, alpha=0.8, with_fastreid=False, fast_reid_config='fast_reid/configs/CUHKSYSU_DanceTrack/sbs_S50.yml', fast_reid_weights=None, with_longterm_reid=False, longterm_reid_weight=0.0, longterm_reid_weight_low=0.0, with_longterm_reid_correction=False, longterm_reid_correction_thresh=1.0, longterm_reid_correction_thresh_low=1.0, longterm_bank_length=30, adapfs=False, ECC=False, raw_results_path='exps/permatrack_kitti_test/', out_path=None, dataset='mft25', hp=False, demo_type='image', path='./videos/demo.mp4', demo_dancetrack=False, camid=0, save_result=False, aspect_ratio_thresh=1.6, device='gpu')
+2026-10-10 16:18:18 | INFO     | __main__:88 - Model Summary: Params: 99.00M, Gflops: 793.21
+2026-10-10 16:18:18 | INFO     | yolox.data.datasets.mot:41 - loading annotations into memory...
+2026-10-10 16:18:19 | INFO     | yolox.data.datasets.mot:41 - Done (t=0.71s)
+2026-10-10 16:18:19 | INFO     | pycocotools.coco:86 - creating index...
+2026-10-10 16:18:19 | INFO     | pycocotools.coco:86 - index created!
+2026-10-10 16:18:19 | INFO     | __main__:109 - loading checkpoint
+2026-10-10 16:18:20 | INFO     | __main__:114 - loaded checkpoint done.
+2026-10-10 16:18:50 | ERROR    | yolox.core.launch:90 - An error has been caught in function 'launch', process 'MainProcess' (35052), thread 'MainThread' (31468):
+Traceback (most recent call last):
+
+  File "D:\Dsektop\��ҵCV\SU-T\tools\su_tracker.py", line 168, in <module>
+    launch(
+    �� <function launch at 0x0000022369C31480>
+
+> File "D:\Dsektop\��ҵCV\SU-T\yolox\core\launch.py", line 90, in launch
+    main_func(*args)
+    ��          �� (�V�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�h�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T�T...
+    �� <function main at 0x0000022470256290>
+
+  File "D:\Dsektop\��ҵCV\SU-T\tools\su_tracker.py", line 139, in main
+    *_, summary = evaluator.evaluate_su_t(
+                  ��         �� <function MOTEvaluator.evaluate_su_t at 0x0000022470168670>
+                  �� <yolox.evaluators.mot_evaluator.MOTEvaluator object at 0x0000022677434760>
+
+  File "D:\Dsektop\��ҵCV\SU-T\yolox\evaluators\mot_evaluator.py", line 635, in evaluate_su_t
+    tracker = su_t(args, det_thresh=self.args.track_thresh, iou_threshold=self.args.iou_thresh,
+                   ��                ��    ��    ��                           ��    ��    �� 0.25
+                   ��                ��    ��    ��                           ��    �� Namespace(expn='SU-T-NoReID-ValHalf-A01', name=None, dist_backend='nccl', output_dir='D:\\Dsektop\\��ҵCV\\SU-T-Reproduction\\r...
+                   ��                ��    ��    ��                           �� <yolox.evaluators.mot_evaluator.MOTEvaluator object at 0x0000022677434760>
+                   ��                ��    ��    �� 0.6
+                   ��                ��    �� Namespace(expn='SU-T-NoReID-ValHalf-A01', name=None, dist_backend='nccl', output_dir='D:\\Dsektop\\��ҵCV\\SU-T-Reproduction\\r...
+                   ��                �� <yolox.evaluators.mot_evaluator.MOTEvaluator object at 0x0000022677434760>
+                   �� Namespace(expn='SU-T-NoReID-ValHalf-A01', name=None, dist_backend='nccl', output_dir='D:\\Dsektop\\��ҵCV\\SU-T-Reproduction\\r...
+
+NameError: name 'su_t' is not defined

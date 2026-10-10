@@ -1,0 +1,84 @@
+{
+  "source_archive": "D:\\Dsektop\\\u6e14\u4e1aCV\\SU-T\\MFT25\\MFT25-train.zip",
+  "dataset_root": "D:\\Dsektop\\\u6e14\u4e1aCV\\SU-T\\datasets\\mft25",
+  "annotation_file": "D:\\Dsektop\\\u6e14\u4e1aCV\\SU-T\\datasets\\mft25\\annotations\\val_half.json",
+  "split": "author-provided val_half from MFT25-train.zip",
+  "frame_mapping": "val_half local frame f maps to source img1 frame train_half_end_frame + f",
+  "num_sequences": 8,
+  "num_images": 16035,
+  "num_ground_truth_boxes": 132057,
+  "sequences": [
+    {
+      "sequence": "BT-001",
+      "full_frames": 3000,
+      "train_half_end_frame": 1501,
+      "val_half_frames": 1499,
+      "val_half_labeled_frames": 1499,
+      "val_half_ground_truth_boxes": 14990,
+      "verified_against_full_gt": true
+    },
+    {
+      "sequence": "BT-003",
+      "full_frames": 243,
+      "train_half_end_frame": 122,
+      "val_half_frames": 121,
+      "val_half_labeled_frames": 121,
+      "val_half_ground_truth_boxes": 1210,
+      "verified_against_full_gt": true
+    },
+    {
+      "sequence": "BT-005",
+      "full_frames": 1834,
+      "train_half_end_frame": 918,
+      "val_half_frames": 916,
+      "val_half_labeled_frames": 916,
+      "val_half_ground_truth_boxes": 9160,
+      "verified_against_full_gt": true
+    },
+    {
+      "sequence": "MSK-002",
+      "full_frames": 1754,
+      "train_half_end_frame": 878,
+      "val_half_frames": 876,
+      "val_half_labeled_frames": 876,
+      "val_half_ground_truth_boxes": 42924,
+      "verified_against_full_gt": true
+    },
+    {
+      "sequence": "PF-001",
+      "full_frames": 15000,
+      "train_half_end_frame": 7501,
+      "val_half_frames": 7499,
+      "val_half_labeled_frames": 7499,
+      "val_half_ground_truth_boxes": 14998,
+      "verified_against_full_gt": true
+    },
+    {
+      "sequence": "SN-001",
+      "full_frames": 684,
+      "train_half_end_frame": 343,
+      "val_half_frames": 341,
+      "val_half_labeled_frames": 340,
+      "val_half_ground_truth_boxes": 3310,
+      "verified_against_full_gt": true
+    },
+    {
+      "sequence": "SN-013",
+      "full_frames": 3000,
+      "train_half_end_frame": 1501,
+      "val_half_frames": 1499,
+      "val_half_labeled_frames": 1499,
+      "val_half_ground_truth_boxes": 14174,
+      "verified_against_full_gt": true
+    },
+    {
+      "sequence": "SN-015",
+      "full_frames": 6570,
+      "train_half_end_frame": 3286,
+      "val_half_frames": 3284,
+      "val_half_labeled_frames": 3284,
+      "val_half_ground_truth_boxes": 31291,
+      "verified_against_full_gt": true
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+# Local environment and generated Python files
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Model weights / exported parameter files: intentionally never versioned
+/Pretrained/**
+!/Pretrained/README.md
+*.pth
+*.pth.tar
+*.pt
+*.ckpt
+*.safetensors
+*.onnx
+*.engine
+*.bin
+
+# Large/private local dataset payloads
+/SU-T/MFT25/**
+!/SU-T/MFT25/README.md
+/SU-T/datasets/mft25/
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+
+# Local generated caches not used in the archived A05 protocol
+*.tmp

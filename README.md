@@ -8,6 +8,8 @@ A05 在 MFT25 作者提供的训练视频 `val_half` 上运行，8 段视频、1
 
 这是用于核验组件增量的本地受控验证对照。它不是论文隐藏测试集复现、官方榜单结果或独立留出泛化结论。用户明确选择不训练、不提交结果；论文测试集的标注不可见。
 
+阅读顺序：先看 [`SU-T-Reproduction/复现总结.md`](SU-T-Reproduction/复现总结.md) 了解本地复现结论，再看 [`references/paper_reading.md`](references/paper_reading.md) 了解论文贡献、方法、实验和局限。
+
 ## 内容导航
 
 - `references/papers/`：AAAI 正式出版版 PDF、作者扩展 arXiv 版本及来源说明。
